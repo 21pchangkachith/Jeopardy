@@ -18,7 +18,7 @@ import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
  * @author Phoenix
  * @version 3/2/2020
  */
-public class ParsePanel extends JPanel
+public class ParsePanel extends GamePanel
 {
 	private final String header =   "If you're seeing these lines of text, then this text file was produced by the Jeopardy Review Game written in Java by juniors at Troy High School." + System.lineSeparator()
  + "These lines are intended to discourage you from editing this file" + System.lineSeparator()
@@ -49,6 +49,7 @@ public class ParsePanel extends JPanel
      */
     public ParsePanel()
     {
+    	super();
         setLayout(new BorderLayout());
         
         
@@ -142,7 +143,7 @@ public class ParsePanel extends JPanel
                 	
                 	try
                 	{
-	                    File parsedFile = new File(setPath+pptName);
+	                    File parsedFile = new File(powerpoint.getParent()+pptName);
 	                    if(parsedFile.exists())
 	                    {
 	                    	int overwrite = JOptionPane.showConfirmDialog(new JFrame(), "This gameset seems to already exists. Overwrite?");
@@ -319,38 +320,63 @@ public class ParsePanel extends JPanel
          */
         public void actionPerformed(ActionEvent e)
         {
+        	
+    		JFileChooser fc = new JFileChooser();
+    		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             try
             {
-                String x = newName.getText();
-                if(x.isEmpty())
-                {
-                	JOptionPane.showMessageDialog(new JFrame(), "Please enter new game set name", "Failed to create set", JOptionPane.ERROR_MESSAGE);
-                	return;
-                }
-                if(!x.contains(".txt")) x = x + ".txt";
-                String path = setPath + x;
-                File files = new File(path);
-                if(files.exists())
-                {
-                	JOptionPane.showMessageDialog(new JFrame(), "This gameset already exists", "Failed to create set", JOptionPane.ERROR_MESSAGE);
-                	return;
-                }
-                FileWriter fw = new FileWriter(files);
-                
-                String lines = createTemplate();
-                fw.write(lines);
-                fw.close();
-                newName.setText("");
-                JOptionPane.showMessageDialog(new JFrame(), "The gameset named "+x+" has been successfully created. \n\n Find it in the GameSets folder");
+                //fc.setCurrentDirectory();
             }
             catch(Exception ex)
             {
-            	StringWriter sw = new StringWriter();
-            	PrintWriter pw = new PrintWriter(sw);
-            	ex.printStackTrace(pw);
-                JOptionPane.showMessageDialog(new JFrame(), "Whoops, something went wrong. Record this log below, and someone will know what to do with it. \n\n"+ sw.toString(), "Failed to create set", JOptionPane.ERROR_MESSAGE);
+            	handleException(ex);
             }
-            
+            int returnVal = fc.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) 
+            {
+                File directory = fc.getSelectedFile();
+                try
+                {
+                	
+                    String x = newName.getText();
+                    if(x.isEmpty())
+                    {
+                    	JOptionPane.showMessageDialog(new JFrame(), "Please enter new game set name", "Failed to create set", JOptionPane.ERROR_MESSAGE);
+                    	return;
+                    }
+                    if(!x.contains(".txt")) x = x + ".txt";
+                    String path = directory.toPath() + System.getProperty("file.separator") + x;
+                    File files = new File(path);
+                    if(files.exists())
+                    {
+                    	int overwrite = JOptionPane.showConfirmDialog(new JFrame(), "This gameset seems to already exists. Overwrite?");
+                    	if(overwrite != JOptionPane.YES_OPTION)
+                    	{
+                    		return;
+                    	}
+                    	else
+                    	{
+                    		int confirm = JOptionPane.showConfirmDialog(new JFrame(), "Continuing anyways will delete the previous file. \n Are you ABSOLUTELY sure you want to continue?");
+                    		if(confirm != JOptionPane.YES_OPTION)
+                        	{
+                        		return;
+                        	}
+                    	}
+                    }
+                    FileWriter fw = new FileWriter(files);
+                    
+                    String lines = createTemplate();
+                    fw.write(lines);
+                    fw.close();
+                    newName.setText("");
+                    JOptionPane.showMessageDialog(new JFrame(), "The gameset named "+x+" has been successfully created. \n\n Find it in "+ directory.toPath());
+                }
+                catch(Exception ex)
+                {
+                	handleException(ex);
+                }
+            }
+
         }
         /**
          * Method createTemplate stepwise refined method to find the string to be written to the file

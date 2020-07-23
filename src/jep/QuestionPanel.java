@@ -46,39 +46,13 @@ public class QuestionPanel extends QAPanel
         pointButtons = new JButton[6];
         for(int i=0; i<6; i++)
         {
-            pointButtons[i] = new JButton("Team "+(i+1)) {
-            	
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 4126025494817851466L;
-
-				@Override
-            	protected void paintComponent(Graphics g)
-            	{
-					Graphics newGraphic = g.create();
-					newGraphic.setColor(questionColor.brighter());
-            		super.paintComponent(newGraphic);
-            	}
-				
-				@Override
-            	protected void paintBorder(Graphics g)
-            	{
-					Graphics newGraphic = g.create();
-					newGraphic.setColor(questionColor.brighter());
-            		super.paintBorder(newGraphic);
-            	}
-            };
+            pointButtons[i] = new JButton("Team "+(i+1));
             pointButtons[i].addActionListener(new PointsListener(i+1));
             pointButtons[i].setFont(new Font("New Times Roman", Font.BOLD, 20));
             pointButtons[i].setForeground(categoryColor);
             pointButtons[i].setBackground(questionColor);
+            pointButtons[i].setMargin(new Insets(0, 10, 0, 10));
             pointButtons[i].setOpaque(true);
-            //CompoundBorder currentBorder = (CompoundBorder) pointButtons[i].getBorder();
-            //LineBorder outsideBorder = new LineBorder (questionColor, 5);
-            //CompoundBorder border = new CompoundBorder(currentBorder.getInsideBorder(), outsideBorder);
-            //pointButtons[i].setBorder(outsideBorder);
-            //pointButtons[i].setBorderPainted(false);
             footerHolder.add(pointButtons[i]);
         }
 

@@ -3,6 +3,9 @@ package jep;
 import javax.swing.*;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -36,6 +39,15 @@ public class GamePanel extends JPanel{
 	{
 		handleException(ex, "Whoops, something went wrong. Record this log below, and someone will know what to do with it. \n\n");
 	}
+	protected void adjustMenuButton(JButton button)
+	{
+        button.setPreferredSize(new Dimension(200,100));
+        button.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        button.setForeground(categoryColor);
+        button.setBackground(questionColor);
+        button.setMargin(new Insets(0, 10, 0, 10));
+        button.setForeground(buttonColor);
+	}
     protected class Listener implements ActionListener
     {
     	String panel;
@@ -48,4 +60,5 @@ public class GamePanel extends JPanel{
     		Driver.switchPanels(panel);
     	}
     }
+    
 }

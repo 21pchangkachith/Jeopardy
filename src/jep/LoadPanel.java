@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.filechooser.*;
+import javax.swing.filechooser.FileFilter;
 /**
  * Class LoadPanel the panel used to play/edit from files
  *
@@ -38,10 +39,11 @@ public class LoadPanel extends GamePanel
     public LoadPanel()
     {
     	super();
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
         
         fc = new JFileChooser();
-        javax.swing.filechooser.FileFilter filter = new FileNameExtensionFilter("TXT file", "txt");
+        FileFilter filter = new FileNameExtensionFilter("TXT file", "txt");
         fc.setFileFilter(filter);
         fc.setAcceptAllFileFilterUsed(false);
         try
@@ -55,16 +57,11 @@ public class LoadPanel extends GamePanel
         JButton selectButton = new JButton("Select");
         selectButton.addActionListener(new SelectListener());
         
-        JButton parseButton = new JButton("Create new game set");
+        JButton parseButton = new JButton("Create new set");
         parseButton.addActionListener(new Listener("ParsePanel"));
         
-        playButton = new JButton("Play");
-        playButton.addActionListener(new LoadListener(false));
-        playButton.setEnabled(false);
-        
-        editButton = new JButton("Edit");
-        editButton.addActionListener(new LoadListener(true));
-        editButton.setEnabled(false);
+        playButton = makeLoadButton("Play", false);
+        editButton = makeLoadButton("Edit", true);
         
         buttons = new JButton[]{selectButton, parseButton, playButton, editButton};
         JPanel buttonHolder = new JPanel();
@@ -74,41 +71,33 @@ public class LoadPanel extends GamePanel
         for(int i=0; i<buttons.length; i++)
         {
             JButton currentButton = buttons[i];
+            adjustMenuButton(currentButton);	
             buttonHolder.add(currentButton);
-            currentButton.setPreferredSize(new Dimension(200,100));
-            currentButton.setFont(new Font("Times New Roman", Font.BOLD, 20));
         }
-        JButton placeHolder = new JButton();
-        placeHolder.setVisible(false);
-        placeHolder.setPreferredSize(new Dimension(200,100));
-        placeHolder.setOpaque(false);
-        buttonHolder.add(placeHolder);
         
-        JPanel sizeFixer = new JPanel();
-        sizeFixer.setOpaque(false);
-        sizeFixer.setLayout(new FlowLayout());
-        sizeFixer.add(buttonHolder);
-        add(sizeFixer, BorderLayout.SOUTH);
+        c.gridx=0;
+        c.gridy=1;
+        c.weightx=1.0;
+        c.weighty=1.0;
+        //c.fill= GridBagConstraints.HORIZONTAL;
+        add(buttonHolder, c);
         
-         JPanel header = new JPanel();
-        header.setOpaque(false);
-        header.setLayout(new GridLayout(1,5));
-
         JButton backButton = new JButton("Back");
-        backButton.setPreferredSize(new Dimension(200,100));
+        adjustMenuButton(backButton);	
         backButton.addActionListener(new Listener("MainScreenPanel"));
-        backButton.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        c.gridy--;
+        c.anchor= GridBagConstraints.FIRST_LINE_START;
+        add(backButton, c);
 
-        header.add(backButton);
-        for(int i=0; i<4; i++)
-        {
-            JButton filler= new JButton();
-            header.add(filler);
-            filler.setVisible(false);
-        }
-        add(header, BorderLayout.NORTH);
         
     }
+	private JButton makeLoadButton(String text, boolean edit) {
+		JButton button = new JButton(text);
+        button.addActionListener(new LoadListener(edit));
+        button.setEnabled(false);
+        
+        return button;
+	}
 
 
     /**
