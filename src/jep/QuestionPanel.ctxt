@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=QuestionPanel
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ QuestionPanel\ here.\r\n\r\n\ @author\ Phoenix\ Changkachith\r\n\ @version\ 3/2/2020\r\n\ \r\n
+comment1.params=
+comment1.target=QuestionPanel()
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ QuestionPanel\r\n
+comment2.params=
+comment2.target=void\ updateScores()
+comment2.text=\r\n\ Method\ updateScores\ updates\ the\ GUI\ scores\ of\ each\ team\r\n\r\n
+comment3.params=f
+comment3.target=void\ setFile(java.io.File)
+comment3.text=\r\n\ Method\ setFile\ records\ the\ file\ for\ questionpanel\r\n\r\n\ @param\ f\ the\ file\r\n
+comment4.params=e
+comment4.target=void\ setEdit(boolean)
+comment4.text=\r\n\ Method\ setEdit\ prepares\ the\ questionpanel\ to\ be\ edited\ if\ the\ user\ has\ chosen\ to\ go\ into\ edit\ mode\r\n\r\n\ @param\ e\ boolean\ deciding\ whether\ or\ not\ the\ question\ is\ to\ be\ edited\r\n
+comment5.params=q
+comment5.target=void\ setQuestion(Question)
+comment5.text=\r\n\ Method\ setQuestion\ stores\ the\ new\ question\ and\ updates\ labels\ to\ reflect\ it\r\n\ \r\n\ @param\ q\ the\ new\ question\r\n
+numComments=6

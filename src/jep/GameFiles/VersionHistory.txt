@@ -1,0 +1,7 @@
+Phoenix (6.5-8.5-9) Justin(9)
+6.5 - Major update, created sample file determining format of new sets, taught questionlistpanel to read it, created questionpanel and answerpanel to sort of play it.
+7.5 - Daily doubles, Part of final jeopardy, Added points3
+8.5 - Commented some of questionlistpanel, fixed category labels not showing, moved points labels, fixed final jeopardy input boxes not showing
+TO BE ADDED - getting questions wrong, final jeopardy still needs to fix values, parsing stuff
+borderlayout for popup panel
+9 - Added edit functioning, fixed some fonts, credits

@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=ParsePanel
+comment0.text=\r\n\ Class\ ParsePanel\ the\ panel\ used\ to\ create\ new\ sets\ from\ scratch\r\n\r\n\ @author\ Phoenix\r\n\ @version\ 3/2/2020\r\n
+comment1.params=
+comment1.target=ParsePanel()
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ ParsePanel\ initializes\ all\ values\r\n
+numComments=2

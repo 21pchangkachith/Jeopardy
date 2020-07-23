@@ -1,0 +1,4 @@
+This is the settings file.
+///////////////////////////////
+Default path: null
+Number of Daily Doubles: 2

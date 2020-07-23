@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=Category
+comment0.text=\r\n\ Class\ Category\ sets\ the\ five\ categories\ of\ the\ Jeopardy\ Game\r\n\ @author\ Phoenix\ Changkachith\r\n\ @author\ Siddhant\ Gupta\r\n\ @version\ 3/2/2020\r\n\ @period\ 2\r\n\ @teacher\ Coglianese\r\n
+comment1.params=
+comment1.target=Category()
+comment1.text=\r\n\ Sets\ the\ value\ of\ 'name',\ and\ the\ length\ of\ 'questionSet',\ then\ the\r\n\ default\ category\ subjects,\ will\ be\ the\ value\ of\ name,\ which\ is\ '???'\r\n\ \r\n\ param\ n/a\r\n
+comment2.params=s
+comment2.target=Category(java.lang.String)
+comment2.text=\r\n\ Sets\ the\ value\ of\ 'name',\ and\ the\ length\ of\ 'questionSet',\ then\ the\r\n\ default\ category\ subjects,\ will\ be\ the\ value\ of\ name,\ which\ is\ '???'\r\n\ \r\n\ param\ s\ -\ It\ is\ a\ string\ that\ is\ used\ to\ set\ the\ subject\ for\r\n\ 'questionSet'\r\n
+comment3.params=n
+comment3.target=void\ setName(java.lang.String)
+comment3.text=\r\n\ Sets\ the\ value\ of\ 'name',\ based\ on\ the\ parameter,\ 'n'\r\n\ \r\n\ param\ n\ -\ It\ is\ a\ string\ that\ is\ used\ to\ set\ the\ value\ of\ 'name'\r\n\ \r\n\ return\ n/a\r\n
+comment4.params=index
+comment4.target=Question\ getQuestion(int)
+comment4.text=\r\n\ Returns\ the\ specific\ question\ object\ from\ the\ array\ 'questionSet'\r\n\ based\ on\ the\ index\ given\ as\ the\ parameter.\r\n\ \r\n\ param\ index\ -\ It\ is\ a\ string\ that\ is\ used\ to\ set\ the\ value\ of\ 'name'\r\n\ \r\n\ return\ Question\ object\ from\ the\ 'questionSet'\ array\r\n
+comment5.params=
+comment5.target=java.lang.String\ getName()
+comment5.text=\r\n\ Returns\ the\ String\ variable\ 'name'\r\n\ \r\n\ param\ n/a\r\n\ \r\n\ return\ String\ 'name'\r\n
+numComments=6

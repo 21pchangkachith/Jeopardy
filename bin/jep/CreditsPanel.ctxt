@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=CreditsPanel
+comment0.text=\r\n\ Class\ CreditsPanel\ displays\ the\ credits\r\n\ \r\n\ @author\ Phoenix\ Changkachith\r\n\ @author\ Justin\ Son\r\n\ @version\ 2/10/2020\r\n\ @period\ 2\r\n\ @teacher\ Coglianese\r\n
+comment1.params=
+comment1.target=CreditsPanel()
+comment1.text=\r\n\ Constructor\ for\ objects\ of\ class\ CreditsPanel\r\n\ \r\n\ @author\ Phoenix\ Changkachith\r\n\ @author\ Justin\ Son\r\n\ @version\ 2/10/2020\r\n\ @period\ 2\r\n\ @teacher\ Coglianese\r\n
+numComments=2
