@@ -1,4 +1,6 @@
 This is the settings file.
 ///////////////////////////////
-Default path: null
-Number of Daily Doubles: 2
+num_daily_doubles: (2)
+question_color:
+category_color:
+team_buttons_color:

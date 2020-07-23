@@ -12,14 +12,16 @@ public class GamePanel extends JPanel{
 	 * 
 	 */
 	private static final long serialVersionUID = 983369563163169425L;
-	protected Color moneyColor, categoryColor, questionColor;
+	protected Color moneyColor, categoryColor, questionColor, buttonColor;
 	protected File file;
 	public GamePanel()
 	{
 		super();
 		moneyColor = new Color(244, 197, 79);
 		categoryColor = new Color(210, 45, 45);
-		questionColor = new Color(21, 43, 141);
+		questionColor = new Color(71, 119, 190);
+		buttonColor = new Color(21, 43, 141);
+				//new Color(21, 43, 141);
 				//new Color(47, 66, 147);
 	    file = null;
 	}

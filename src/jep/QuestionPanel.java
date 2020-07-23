@@ -57,6 +57,14 @@ public class QuestionPanel extends QAPanel
 					newGraphic.setColor(questionColor.brighter());
             		super.paintComponent(newGraphic);
             	}
+				
+				@Override
+            	protected void paintBorder(Graphics g)
+            	{
+					Graphics newGraphic = g.create();
+					newGraphic.setColor(questionColor.brighter());
+            		super.paintBorder(newGraphic);
+            	}
             };
             pointButtons[i].addActionListener(new PointsListener(i+1));
             pointButtons[i].setFont(new Font("New Times Roman", Font.BOLD, 20));

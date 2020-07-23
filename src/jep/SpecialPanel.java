@@ -41,41 +41,40 @@ public class SpecialPanel extends JPanel
      */
     public SpecialPanel()
     {
+    	GridBagConstraints c = new GridBagConstraints();
     	setOpaque(false);
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         question=null;
         dailyDouble=true;
         
 
         amounts = new ArrayList<JTextField>();
-        JPanel header = new JPanel(new GridLayout(1,4));
-        header.setOpaque(false);
 
         JButton backButton = new JButton("");
         backButton.setIcon(new ImageIcon(DefaultPanel.backButtonPath));
         backButton.setOpaque(false);
         backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
         backButton.addActionListener(new BackListener());
-        header.add(backButton);
+        
+        c.gridy=0;
+        c.gridx=0;
+        c.anchor= GridBagConstraints.FIRST_LINE_START;
+        c.weightx= 1.0;
+        c.weighty= 1.0;
+        c.insets = new Insets(10, 10, 0, 0);
+        add(backButton, c);
 
-        JButton whiteSpace = new JButton(" ");
-        whiteSpace.setVisible(false);
-        whiteSpace.setEnabled(false);
-        whiteSpace.setPreferredSize(new Dimension(100,100));
-        header.add(whiteSpace);
-
+        
         specialLabel = new JLabel("");
         specialLabel.setFont(new Font("New Times Roman", Font.BOLD, 50));
         specialLabel.setForeground(new Color(246, 204, 117));
-        header.add(specialLabel);
+        c.gridx++;
+        c.insets = new Insets(10, 0, 0, 30);
+        add(specialLabel, c);
 
-        JLabel howMuchLabel = new JLabel("How Much?");
-        howMuchLabel.setFont(new Font("New Times Roman", Font.BOLD, 25));
-        howMuchLabel.setForeground(new Color(246, 204, 117));
-        header.add(howMuchLabel);
-
-        add(header, BorderLayout.NORTH);
-
+        
         
         inputInfo = new JPanel();
         inputInfo.setLayout(new GridLayout(0, 1));
@@ -84,9 +83,6 @@ public class SpecialPanel extends JPanel
         inputInfo.setOpaque(false);
         inputInfo.setForeground(Color.RED);
         
-        JPanel inputInfoHolder = new JPanel(new BorderLayout());
-        inputInfoHolder.add(inputInfo, BorderLayout.CENTER);
-        inputInfoHolder.setOpaque(false);
         
         
         inputBox = new JPanel();
@@ -101,10 +97,19 @@ public class SpecialPanel extends JPanel
         
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridLayout(0,2));
-        centerPanel.add(inputInfoHolder);
+        centerPanel.add(inputInfo);
         centerPanel.add(inputBox);
         centerPanel.setOpaque(false);
-        add(centerPanel, BorderLayout.CENTER);
+        
+        
+        
+        c.gridx = 0;
+        c.gridy=1; 
+        c.gridwidth=2;
+        c.fill= GridBagConstraints.HORIZONTAL;
+        c.anchor= GridBagConstraints.LINE_END;
+        c.insets = new Insets(0, 30, 0, 30);
+        add(centerPanel, c);
 
         Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
         fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
@@ -114,9 +119,14 @@ public class SpecialPanel extends JPanel
         button.setFont(new Font("New Times Roman", Font.BOLD, 25).deriveFont(fontAttributes));
         button.setForeground(Color.RED);
         button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
         button.setOpaque(false);
         button.addActionListener(new Listener());
-       // add(button, BorderLayout.SOUTH);
+        
+        c.gridy=2;
+        c.anchor= GridBagConstraints.LAST_LINE_START;
+        c.fill= GridBagConstraints.HORIZONTAL;
+        add(button, c);
         
         scoreLabels = new JLabel[6];
         JPanel scoreHolder = new JPanel();
@@ -131,14 +141,11 @@ public class SpecialPanel extends JPanel
             scoreHolder.add(scoreLabels[i]);
         }
         scoreHolder.setOpaque(false);
-       // add(scoreHolder, BorderLayout.SOUTH);
         
-        JPanel bottomContainer = new JPanel();
-        bottomContainer.setOpaque(false);
-        bottomContainer.setLayout(new BorderLayout());
-        bottomContainer.add(button, BorderLayout.NORTH);
-        bottomContainer.add(scoreHolder, BorderLayout.SOUTH);
-        add(bottomContainer, BorderLayout.SOUTH);
+        c.gridy=3;
+        c.anchor= GridBagConstraints.LAST_LINE_START;
+        c.fill= GridBagConstraints.HORIZONTAL;
+        add(scoreHolder, c);
     }
 
     public void setQuestion(Question q)
@@ -180,7 +187,7 @@ public class SpecialPanel extends JPanel
             specialLabel.setText("Final Jeopardy!");
             
             try {
-                String path = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator")+"GameFiles" + System.getProperty("file.separator")+ "music" + System.getProperty("file.separator") + "Jeopardy.wav";
+                String path = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator")+"GameFiles" + System.getProperty("file.separator")+ "resources" +System.getProperty("file.separator")+ "music" + System.getProperty("file.separator") + "Jeopardy.wav";
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);

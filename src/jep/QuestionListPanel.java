@@ -138,6 +138,7 @@ public class QuestionListPanel extends GamePanel
             button.setForeground(new Color(71, 119, 190));
             button.setFont(new Font("New Times Roman", Font.BOLD, 24).deriveFont(fontAttributes));
             button.addActionListener(new Listener(i));
+            button.setContentAreaFilled(false);
             button.setOpaque(false);
             button.setBorderPainted(false);
             buttonArrangementChanger[i] = button;
@@ -177,7 +178,7 @@ public class QuestionListPanel extends GamePanel
        
         button.setFont(boldUnderline);
         button.setForeground(Color.YELLOW);
-        button.setOpaque(true);
+        button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setOpaque(false);
         topPanel.add(button);

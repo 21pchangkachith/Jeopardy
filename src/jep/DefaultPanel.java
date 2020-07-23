@@ -22,11 +22,11 @@ public class DefaultPanel extends JPanel
 	static {
 		String temp = null;
 		try {
-			temp = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator") + "GameFiles" + System.getProperty("file.separator")+ "images" + System.getProperty("file.separator") + "BackButtonPicture.PNG";
+			temp = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator") + "GameFiles" + System.getProperty("file.separator")+ "resources" +System.getProperty("file.separator")+ "images" + System.getProperty("file.separator") + "BackButtonPicture.PNG";
 		}
 		catch(Exception e)
 		{
-			System.out.println("Back Button missing, please replace /GameFiles/images/BackButtonPicture.PNG");
+			System.out.println("Back Button missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
 		}
 		backButtonPath=temp;
 	}
@@ -62,6 +62,11 @@ public class DefaultPanel extends JPanel
      */
     public DefaultPanel()
     {
+		 try {
+			    UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+			 } catch (Exception e) {
+			            e.printStackTrace();
+			 }
     	qListP= new QuestionListPanel();
         qP= new QuestionPanel();
         aP= new AnswerPanel();
@@ -80,11 +85,11 @@ public class DefaultPanel extends JPanel
     	super.paintComponent(g);
     	String temp = null;
 		try {
-			temp = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator") + "GameFiles" + System.getProperty("file.separator")+ "images" + System.getProperty("file.separator") + "background.png";
+			temp = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep"  + System.getProperty("file.separator")+ "GameFiles" + System.getProperty("file.separator") + "resources" +  System.getProperty("file.separator")+ "images" + System.getProperty("file.separator") + "background.png";
 		}
 		catch(Exception e)
 		{
-			System.out.println("Back Button missing, please replace /GameFiles/images/BackButtonPicture.PNG");
+			System.out.println("Background missing, please replace /GameFiles/resources/images/background.png");
 		}
     	g.drawImage(new ImageIcon(temp).getImage(), 0, 0, null);
     }
