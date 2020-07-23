@@ -5,3 +5,7 @@ Phoenix (6.5-8.5-9) Justin(9)
 TO BE ADDED - getting questions wrong, final jeopardy still needs to fix values, parsing stuff
 borderlayout for popup panel
 9 - Added edit functioning, fixed some fonts, credits
+
+ALL FORMER UPDATES WILL BE DESCRIBED AS 1.X.X
+
+AS OF TODAY, MY UPDATES ARE NOW 2.X.X (Jul 23)

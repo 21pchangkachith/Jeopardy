@@ -52,7 +52,7 @@ public class SpecialPanel extends JPanel
         amounts = new ArrayList<JTextField>();
 
         JButton backButton = new JButton("");
-        backButton.setIcon(new ImageIcon(DefaultPanel.backButtonPath));
+        backButton.setIcon(DefaultPanel.backButtonIcon);
         backButton.setOpaque(false);
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);

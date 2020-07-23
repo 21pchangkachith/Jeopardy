@@ -1,4 +1,5 @@
 package jep;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -18,18 +19,7 @@ public class DefaultPanel extends JPanel
 	 * 
 	 */
 	private static final long serialVersionUID = 5693779735124158262L;
-	static final String backButtonPath;
-	static {
-		String temp = null;
-		try {
-			temp = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator") + "GameFiles" + System.getProperty("file.separator")+ "resources" +System.getProperty("file.separator")+ "images" + System.getProperty("file.separator") + "BackButtonPicture.PNG";
-		}
-		catch(Exception e)
-		{
-			System.out.println("Back Button missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
-		}
-		backButtonPath=temp;
-	}
+	static ImageIcon backButtonIcon;
 	/**
      * int numDailyDoubles the number of daily doubles, easily accessible in case changes are required during maintenance
      */
@@ -62,6 +52,20 @@ public class DefaultPanel extends JPanel
      */
     public DefaultPanel()
     {
+    	ImageIcon icon = null;
+    	
+		try {
+
+			InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/images/BackButtonPicture.PNG");
+			icon= new ImageIcon(ImageIO.read(stream));
+			
+		}
+		catch(Exception e)
+		{
+			System.out.println("Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
+		}
+		backButtonIcon = icon;
+		
 		 try {
 			    UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
 			 } catch (Exception e) {
@@ -83,15 +87,19 @@ public class DefaultPanel extends JPanel
     protected void paintComponent(Graphics g)
     {
     	super.paintComponent(g);
-    	String temp = null;
+    	ImageIcon icon = null;
+    	
 		try {
-			temp = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep"  + System.getProperty("file.separator")+ "GameFiles" + System.getProperty("file.separator") + "resources" +  System.getProperty("file.separator")+ "images" + System.getProperty("file.separator") + "background.png";
+
+			InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/images/background.png");
+			icon= new ImageIcon(ImageIO.read(stream));
+			
 		}
 		catch(Exception e)
 		{
 			System.out.println("Background missing, please replace /GameFiles/resources/images/background.png");
 		}
-    	g.drawImage(new ImageIcon(temp).getImage(), 0, 0, null);
+    	g.drawImage(icon.getImage(), 0, 0, null);
     }
 
     /**

@@ -79,7 +79,7 @@ public class QAPanel extends GamePanel{
         backButton.setMargin(new Insets(0,0,0,0));
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);
-        backButton.setIcon(new ImageIcon(DefaultPanel.backButtonPath));
+        backButton.setIcon(DefaultPanel.backButtonIcon);
         
 
         

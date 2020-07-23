@@ -1,7 +1,5 @@
 package jep;
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -50,6 +48,11 @@ public class QuestionPanel extends QAPanel
         {
             pointButtons[i] = new JButton("Team "+(i+1)) {
             	
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 4126025494817851466L;
+
 				@Override
             	protected void paintComponent(Graphics g)
             	{
