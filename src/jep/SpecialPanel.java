@@ -7,6 +7,7 @@ import java.awt.event.*;
 import java.awt.font.TextAttribute;
 import java.util.*;
 import java.io.*;
+
 import javax.sound.sampled.*;
 /**
  * Class SpecialPanel counts for daily doubles and things like that
@@ -17,7 +18,7 @@ import javax.sound.sampled.*;
  * @period 2
  * @teacher Coglianese
  */
-public class SpecialPanel extends JPanel
+public class SpecialPanel extends GamePanel
 {
     /**
 	 * 
@@ -187,13 +188,13 @@ public class SpecialPanel extends JPanel
             specialLabel.setText("Final Jeopardy!");
             
             try {
-                String path = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator")+"GameFiles" + System.getProperty("file.separator")+ "resources" +System.getProperty("file.separator")+ "music" + System.getProperty("file.separator") + "Jeopardy.wav";
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
+            	InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/music/Jeopardy.wav");
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(stream);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
                 clip.start();
             } catch(Exception ex) {
-                System.out.println("Error with playing sound.");
+                handleException(ex, "Error with playing sound.");
                 ex.printStackTrace();
             }
             for(int i=0; i<6; i++)

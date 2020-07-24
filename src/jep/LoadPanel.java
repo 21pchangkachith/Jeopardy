@@ -39,7 +39,6 @@ public class LoadPanel extends GamePanel
     public LoadPanel()
     {
     	super();
-        setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         
         fc = new JFileChooser();

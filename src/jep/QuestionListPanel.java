@@ -1,8 +1,8 @@
+
 package jep;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.font.TextAttribute;
 import java.io.*;
 import java.util.*;
 /**
@@ -23,15 +23,15 @@ public class QuestionListPanel extends GamePanel
 	/**
      * JPanel questionHolder the JPanel that holds all the question buttons
      */
-    JPanel questionHolder;
+    private JPanel questionHolder;
     /**
      * Category[] categoryList the array of 5 categories in the game
      */
-    Category[] categoryList; 
+    private Category[] categoryList; 
     /**
      * Question finalJeopardy the final Jeopardy question
      */
-    Question finalJeopardy;
+    private Question finalJeopardy;
     /**
      * int[] scores the array that stores the points of each team
      */
@@ -43,24 +43,20 @@ public class QuestionListPanel extends GamePanel
     /**
      * JLabel[] categoryLabels the array of JLabels that stores the category names
      */
-    JLabel[] categoryLabels;
+    private JLabel[] categoryLabels;
     /**
      * JTextField[] categoryEdits the array of JTextFields that are used when edit mode is enabled
      */
-    JTextField[] categoryEdits;
+    private JTextField[] categoryEdits;
     /**
      * JButton[] buttonArrangementChanger the array of buttons on the question list screen
      */
-    JButton[] buttonArrangementChanger;
-     /**
-     * File file the txt file containing an acceptable format that can be read into Question objects and Category names
-     */
-    File file;
+    private JButton[] buttonArrangementChanger;
     /**
      * boolean edit the boolean that decides whether or not the file is in edit mode
      */
-    boolean edit;
-    int[] indexOfDailyDoubles;
+    private boolean edit;
+    private int[] indexOfDailyDoubles;
     /**
      * Constructor for objects of class QuestionListPanel initializes all values, but is never fully set up until a valid file is selected in parsepanel.
      */
@@ -68,11 +64,8 @@ public class QuestionListPanel extends GamePanel
     public QuestionListPanel()
     {
     	super();
-    	 Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
-         fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-         Font boldUnderline = new Font("New Times Roman",Font.BOLD, 28).deriveFont(fontAttributes);
+
          
-    	setOpaque(false);
         edit=false;
         // initializes int 'Question' array
         setLayout(new BorderLayout());
@@ -82,19 +75,17 @@ public class QuestionListPanel extends GamePanel
         for(int i=0; i<categoryLabels.length; i++)
         {
             categoryLabels[i]= new JLabel("");
-            categoryLabels[i].setBackground(new Color(252, 255, 175));
-            categoryLabels[i].setFont(new Font("New Times Roman", Font.BOLD, 18));
-            categoryLabels[i].setForeground(Color.RED);
-            categoryLabels[i].setOpaque(true);
+            setUpCategory(categoryLabels[i]);
+            
+            
             categoryEdits[i] = new JTextField("Category");
             categoryEdits[i].setVisible(false);
             categoryEdits[i].setEnabled(false);
-            categoryEdits[i].setForeground(Color.RED);
-            categoryEdits[i].setBackground(new Color(252, 255, 175));
             categoryEdits[i].addActionListener(new EditListener(i));
-            categoryEdits[i].setFont(new Font("New Times Roman", Font.BOLD, 18));
+            setUpCategory(categoryEdits[i]);
+            
+
         }
-        file = null;
         finalJeopardy = new Question();
         //adding point displays
         scoreLabels = new JLabel[6];
@@ -102,52 +93,36 @@ public class QuestionListPanel extends GamePanel
         scoreHolder.setLayout(new GridLayout(1,5));
         for(int i=0; i<scoreLabels.length; i++)
         {
-            scores[i]=-1;
-            scores[i]++;
+            scores[i]= 0;
             scoreLabels[i] = new JLabel("Team "+(i+1)+": "+scores[i]);
             scoreLabels[i].setFont(new Font("New Times Roman", Font.BOLD, 24));
-            scoreLabels[i].setForeground(new Color(246, 204, 117));
+            scoreLabels[i].setForeground(moneyColor);
             scoreHolder.add(scoreLabels[i]);
         }
         scoreHolder.setOpaque(false);
         add(scoreHolder, BorderLayout.SOUTH);
         
-        //yes i could use a 2d array, but i think a traditional array works nicer even if its less readable, and its easier
+        
+        initDailyDoubles();
+        
         buttonArrangementChanger = new JButton[25];
-        indexOfDailyDoubles= new int[DefaultPanel.numDailyDoubles];
-	        for(int i=0; i<indexOfDailyDoubles.length; i++)
-	        {
-	            int index= (int)(25*Math.random());
-	            indexOfDailyDoubles[i]=index;
-	            
-	            
-	            for(int repI=i-1; repI>=0; repI--)
-	            {
-	                while(indexOfDailyDoubles[i]==indexOfDailyDoubles[repI])
-	                {
-	                    index= (int)(25*Math.random());
-	                    indexOfDailyDoubles[i]=index;
-	                }
-	            }
-	            System.out.println("INDEX" + index);
-	        }
-
         for(int i=0; i<25; i++)
         {
             JButton button = new JButton( "$"+ (((i%5)+1)*100) );
-            button.setForeground(new Color(71, 119, 190));
+            button.setForeground(buttonBackColor);
             button.setFont(new Font("New Times Roman", Font.BOLD, 24).deriveFont(fontAttributes));
             button.addActionListener(new Listener(i));
-            button.setContentAreaFilled(false);
-            button.setOpaque(false);
-            button.setBorderPainted(false);
+            removeBackground(button);
             buttonArrangementChanger[i] = button;
 
         }
         
         questionHolder = new JPanel();
-        questionHolder.setLayout(new GridLayout(7,5));
-
+        GridLayout questionLayout = new GridLayout(7, 5);
+        questionLayout.setVgap(20);
+        questionLayout.setHgap(2);
+        questionHolder.setOpaque(false);
+        questionHolder.setLayout(questionLayout);
         for(int i=0; i<categoryList.length; i++)
         {
             questionHolder.add(categoryLabels[i]);
@@ -178,20 +153,40 @@ public class QuestionListPanel extends GamePanel
        
         button.setFont(boldUnderline);
         button.setForeground(Color.YELLOW);
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setOpaque(false);
+        removeBackground(button);
         topPanel.add(button);
         
-        ((GridLayout)questionHolder.getLayout()).setVgap(20);
-        ((GridLayout)questionHolder.getLayout()).setHgap(2);
+        
         add(topPanel, BorderLayout.NORTH);
-        questionHolder.setOpaque(false);
+        
 
         add(questionHolder, BorderLayout.CENTER);
-
-        
     }
+	private void removeBackground(JButton button) {
+		button.setContentAreaFilled(false);
+		button.setOpaque(false);
+		button.setBorderPainted(false);
+	}
+	private void initDailyDoubles() {
+		indexOfDailyDoubles= new int[DefaultPanel.numDailyDoubles];
+	        for(int i=0; i<indexOfDailyDoubles.length; i++)
+	        {
+	            int index= (int)(25*Math.random());
+	            indexOfDailyDoubles[i]=index;
+	            
+	            
+	            for(int repI=i-1; repI>=0; repI--)
+	            {
+	                while(indexOfDailyDoubles[i]==indexOfDailyDoubles[repI])
+	                {
+	                    index= (int)(25*Math.random());
+	                    indexOfDailyDoubles[i]=index;
+	                }
+	            }
+	            System.out.println("INDEX" + index);
+	        }
+	}
+
     /**
      * Method refreshButtons refreshes the values on the buttons to reflect the current values of the questions they refer to
      */
@@ -303,7 +298,7 @@ public class QuestionListPanel extends GamePanel
      * @param dailyDoubleIndexes all indexes of daily doubles
      * @return whether or not the index was found in the array of daily double indexes
      */
-    public boolean checkDailyDouble(int index)
+    private boolean checkDailyDouble(int index)
     {
         for(int i=0; i<indexOfDailyDoubles.length; i++)
         {
@@ -388,7 +383,7 @@ public class QuestionListPanel extends GamePanel
      *
      * @return the question
      */
-    public Question findQuestion(int index)
+    private Question findQuestion(int index)
     {
     	Question target;
     	if(index==25)
@@ -515,7 +510,7 @@ public class QuestionListPanel extends GamePanel
      * @param s the string
      * @param index used for recursion
      */
-    public void processCategories(String s, int index)
+    private void processCategories(String s, int index)
     {
             String name = s.substring(0, s.indexOf(","));
             categoryList[index] = new Category(name);

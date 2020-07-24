@@ -12,7 +12,7 @@ import java.io.*;
  * @period 2
  * @teacher Coglianese
  */
-public class DefaultPanel extends JPanel
+public class DefaultPanel extends GamePanel
 {
 
     /**
@@ -20,10 +20,7 @@ public class DefaultPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 5693779735124158262L;
 	static ImageIcon backButtonIcon;
-	/**
-     * int numDailyDoubles the number of daily doubles, easily accessible in case changes are required during maintenance
-     */
-    public static int numDailyDoubles=2;
+
     /**
      * QuestionListPanel qListP the QuestionListPanel, the reference is used as a shortcut because time is wasted looking through the array and casting otherwise
      */
@@ -62,7 +59,7 @@ public class DefaultPanel extends JPanel
 		}
 		catch(Exception e)
 		{
-			System.out.println("Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
+			handleException(e, "Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
 		}
 		backButtonIcon = icon;
 		
@@ -71,12 +68,13 @@ public class DefaultPanel extends JPanel
 			 } catch (Exception e) {
 			            e.printStackTrace();
 			 }
+		SettingsPanel settings = new SettingsPanel();
     	qListP= new QuestionListPanel();
         qP= new QuestionPanel();
         aP= new AnswerPanel();
         previousPanel = null;
         editing = false;
-        PANELS = new JPanel[]{new MainScreenPanel(), new CreditsPanel(), new LoadPanel(), new ParsePanel(), qListP, qP, aP, new SpecialPanel()};
+        PANELS = new JPanel[]{new MainScreenPanel(), new CreditsPanel(), new LoadPanel(), new ParsePanel(), qListP, qP, aP, settings};
         cards = new CardLayout();
         setLayout(cards);
         setUpPanels();
@@ -113,7 +111,6 @@ public class DefaultPanel extends JPanel
         {
             add(PANELS[i]);
             cards.addLayoutComponent(PANELS[i], PANELS[i].getClass().getSimpleName());
-            PANELS[i].setOpaque(false);
         }
     }
 

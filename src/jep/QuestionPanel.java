@@ -50,7 +50,7 @@ public class QuestionPanel extends QAPanel
             pointButtons[i].addActionListener(new PointsListener(i+1));
             pointButtons[i].setFont(new Font("New Times Roman", Font.BOLD, 20));
             pointButtons[i].setForeground(categoryColor);
-            pointButtons[i].setBackground(questionColor);
+            pointButtons[i].setBackground(buttonBackColor);
             pointButtons[i].setMargin(new Insets(0, 10, 0, 10));
             pointButtons[i].setOpaque(true);
             footerHolder.add(pointButtons[i]);

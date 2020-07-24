@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk-14.0.1.jdk/bin/lib/SparseBitSet-1.2.jar"/>
 	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk-14.0.1.jdk/bin/ooxml-lib/curvesapi-1.06.jar"/>
 	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk-14.0.1.jdk/bin/ooxml-lib/xmlbeans-3.1.0.jar"/>
+	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk-14.0.1.jdk/bin/json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -25,16 +25,6 @@ public class ParsePanel extends GamePanel
  + "If you are interested in directly modifying the particular set of questions in this text file, please refrain from modifying the formatting." + System.lineSeparator()
 + "However, it is recommended that you edit this set of questions directly through the program." + System.lineSeparator()
 + "Categories:" + System.lineSeparator();
-	private static String setPath; 
-	static{
-		try {
-			setPath = Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" +  System.getProperty("file.separator")+"GameFiles" + System.getProperty("file.separator")+ "GameSets" + System.getProperty("file.separator");
-			}
-		catch(Exception ex)
-		{
-			JOptionPane.showMessageDialog(new JFrame(), "Something went wrong.");
-		}
-		}
 		
     /**
 	 * 
@@ -50,61 +40,57 @@ public class ParsePanel extends GamePanel
     public ParsePanel()
     {
     	super();
-        setLayout(new BorderLayout());
-        
+        GridBagConstraints c = new GridBagConstraints();
         
 
         
         JButton backButton = createButton("Back", new Listener());
         JButton newButton = createButton("Create new set: ", new CreateListener());
         JButton parseButton = createButton("Import set", new ParseListener());
-        parseButton.setPreferredSize(new Dimension(400, 100));
-        
-        JPanel buttonList  = new JPanel();
-        buttonList.setOpaque(false);
-        buttonList.setLayout(new GridLayout(1,5));
-        buttonList.add(backButton);
-        for(int i = 0; i<4; i++){
-            JButton button = new JButton("");
-            buttonList.add(button);
-            button.setVisible(false);
-        }
-        add(buttonList, BorderLayout.NORTH);
-        
-
-        
-        
+           
         
         newName = new JTextField("example_name.txt");
-        newName.setPreferredSize(new Dimension(200,50));
-        
-        JPanel createHolder = new JPanel(new GridBagLayout());
-        createHolder.setOpaque(false);
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        createHolder.add(newButton, c);
-        
-        c.gridx= GridBagConstraints.RELATIVE;
-        createHolder.add(newName, c);
-        c.gridy= 1;
-        c.gridwidth = 2;
-        c.gridx= 0;
-        createHolder.add(parseButton, c);
-        
-        add(createHolder, BorderLayout.CENTER);
-        
-        
+        newName.setPreferredSize(newButton.getPreferredSize());
+        setUpCategory(newName);
         
 
-        setOpaque(false);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        c.weighty=0.5;
+        add(backButton, c);
+        c.gridx++;
+        c.gridy++;
+        c.weightx=0.5;
+        c.weighty=0.0;
+        c.fill= GridBagConstraints.HORIZONTAL;
+        
+        
+        add(newButton, c);
+        c.gridx++;
+        
+        add(newName, c);
+        c.weighty=1.0;
+        
+        c.gridx--;
+        c.gridy++;
+        c.gridwidth = 2;
+        c.fill= GridBagConstraints.HORIZONTAL;
+        add(parseButton, c);
+        
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        c.weightx=1.0;
+        c.gridx = 3;
+        c.gridwidth=1;
+        add(panel, c);
+        
     }
     public JButton createButton(String text, ActionListener listen)
     {
         JButton button = new JButton(text);
         button.addActionListener(listen);
-        button.setPreferredSize(new Dimension(200,100));
-        button.setFont(new Font("Times New Roman", Font.BOLD, 16));
+        adjustMenuButton(button);
         return button;
     }
     private class ParseListener implements ActionListener
@@ -325,7 +311,7 @@ public class ParsePanel extends GamePanel
     		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             try
             {
-                //fc.setCurrentDirectory();
+                fc.setCurrentDirectory(new File(defaultPath));
             }
             catch(Exception ex)
             {
