@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
+
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.hslf.usermodel.HSLFShape;
@@ -104,7 +106,7 @@ public class ParsePanel extends GamePanel
             fc.setAcceptAllFileFilterUsed(false);
             try
             {
-                fc.setCurrentDirectory(new File(Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator")+ "GameFiles" + System.getProperty("file.separator")+ "Powerpoints" + System.getProperty("file.separator")));
+                fc.setCurrentDirectory(new File(defaultPath));
             }
             catch(Exception ex)
             {
@@ -123,13 +125,13 @@ public class ParsePanel extends GamePanel
                 	HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(powerpoint));
                 	SlideShowExtractor<HSLFShape, HSLFTextParagraph> extractor = new SlideShowExtractor<>(ppt);
                 	String pptContents = extractor.getText();
-                	String pptName = powerpoint.getName();
-                	pptName = pptName.substring(0, pptName.lastIndexOf("."))+".txt";
+                	//String pptName = powerpoint.getName();
+                	//pptName = pptName.substring(0, pptName.lastIndexOf("."))+".txt";
                 	extractor.close();
                 	
                 	try
                 	{
-	                    File parsedFile = new File(powerpoint.getParent()+pptName);
+	                    File parsedFile = new File(powerpoint.getPath().substring(0, powerpoint.getPath().lastIndexOf("."))+".txt");
 	                    if(parsedFile.exists())
 	                    {
 	                    	int overwrite = JOptionPane.showConfirmDialog(new JFrame(), "This gameset seems to already exists. Overwrite?");

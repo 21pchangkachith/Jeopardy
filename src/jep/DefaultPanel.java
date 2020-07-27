@@ -24,7 +24,7 @@ public class DefaultPanel extends GamePanel
     /**
      * QuestionListPanel qListP the QuestionListPanel, the reference is used as a shortcut because time is wasted looking through the array and casting otherwise
      */
-    private QuestionListPanel qListP;
+    private static QuestionListPanel qListP;
     /**
      * QuestionPanel qP the QuestionPanel, the reference is used as a shortcut because time is wasted looking through the array and casting otherwise
      */
@@ -42,7 +42,7 @@ public class DefaultPanel extends GamePanel
      */
     private boolean editing;
     private String previousPanel;
-    public final JPanel[] PANELS;
+    private static JPanel[] PANELS;
     /**
      * 'DefaultPanel' class constructor, instantiates CardLayout object 'cards' and sets up the panels
      * 
@@ -69,15 +69,12 @@ public class DefaultPanel extends GamePanel
 			            e.printStackTrace();
 			 }
 		SettingsPanel settings = new SettingsPanel();
-    	qListP= new QuestionListPanel();
-        qP= new QuestionPanel();
-        aP= new AnswerPanel();
         previousPanel = null;
         editing = false;
-        PANELS = new JPanel[]{new MainScreenPanel(), new CreditsPanel(), new LoadPanel(), new ParsePanel(), qListP, qP, aP, settings};
+        PANELS = new JPanel[]{new MainScreenPanel(), new CreditsPanel(), new LoadPanel(), new ParsePanel(), null, null, null, null, settings};
         cards = new CardLayout();
         setLayout(cards);
-        setUpPanels();
+        setUpMenuPanels();
         cards.show(this, PANELS[0].getClass().getSimpleName());
         
     }
@@ -104,14 +101,71 @@ public class DefaultPanel extends GamePanel
      *  Method setUpPanels adds all Panels to the cards layout 
      * 
      */
-    public void setUpPanels()
+    public void setUpMenuPanels()
     {
 
         for(int i=0; i<PANELS.length; i++)
         {
-            add(PANELS[i]);
-            cards.addLayoutComponent(PANELS[i], PANELS[i].getClass().getSimpleName());
+        	if(i<4||i>7)
+        	{
+        		add(PANELS[i]);
+        		cards.addLayoutComponent(PANELS[i], PANELS[i].getClass().getSimpleName());
+        	}
         }
+    }
+    public void setUpGamePanels()
+    {
+
+        for(int i=0; i<PANELS.length; i++)
+        {
+        	if(i>=4&&i<=7)
+        	{
+        		add(PANELS[i]);
+        		cards.addLayoutComponent(PANELS[i], PANELS[i].getClass().getSimpleName());
+        	}
+        }
+    }
+    public static int[] getScores()
+    {
+    	return qListP.getScores();
+    }
+    public static int getScore(int index)
+    {
+    	return qListP.getScore(index);
+    }
+
+	
+	/**
+	 * Method setScore changes a team's score and updates the display
+	 *
+	 * @param newValue the new value of the team's score
+	 * @param teamNum the number the team belongs to
+	 */
+	public static void setScore(int newValue, int teamNum)
+	{
+	    qListP.setScore(newValue, teamNum);
+	}
+    public static void loadSavedGame(File f)
+    {
+    	try
+    	{
+    		
+    		FileInputStream fis = new FileInputStream(f);
+    		ObjectInputStream ois = new ObjectInputStream(fis);
+    		qListP = (QuestionListPanel) ois.readObject();
+    		PANELS[4]= qListP;
+    		numDailyDoubles = ois.readInt();
+    		numTeams = ois.readInt();
+    		
+    		ois.close();
+    		fis.close();
+    		file =f;
+    		System.out.println(file==null);
+    	}
+    	catch(Exception ex)
+    	{
+    		ex.printStackTrace();
+    	}
     }
 
     /**
@@ -121,14 +175,13 @@ public class DefaultPanel extends GamePanel
      */
     public void toPanel(String panel)
     {
-        
         switch(panel)
         {
         	case "AnswerPanel":
         		aP.updateScores();
         		if(editing)
         		{
-        			qP.editQuestion();
+        			qP.doEdit();
         		}
         		break;
         	case "QuestionPanel":
@@ -141,6 +194,26 @@ public class DefaultPanel extends GamePanel
         		break;
         	case "QuestionListPanel":
         		qListP.refreshButtons();
+        		if(previousPanel.equals("AnswerPanel")&&!editing)
+        		{
+        			try
+        			{
+        				System.out.println(file==null);
+        				File temp = new File(file.getPath()+".sav");
+        				FileOutputStream fos = new FileOutputStream(temp);
+        				ObjectOutputStream oos = new ObjectOutputStream(fos);
+        				oos.reset();
+        				oos.writeObject(qListP);
+        				oos.writeInt(numDailyDoubles);
+        				oos.writeInt(numTeams);
+        				oos.close();
+        				fos.close();
+        			}
+        			catch(Exception ex)
+        			{
+        				handleException(ex);
+        			}
+        		}
         		break;
         }
         cards.show(this, panel);
@@ -153,17 +226,33 @@ public class DefaultPanel extends GamePanel
      * @param panel the panel to be switched to
      * @param file the file to be provided
      */
-    public void toPanel(String panel, File file, boolean edit)
+    public void toPanel(String panel, File f, boolean edit)
     {
-        declareFile(file);
-        declareEdit(edit);
-        cards.show(this, panel);
+    	
+    	qP = new QuestionPanel();
+    	PANELS[5] = qP;
+    	aP = new AnswerPanel();
+    	PANELS[6] = aP;
+    	PANELS[7] = new SpecialPanel();
+    	if(f.getPath().substring(f.getPath().lastIndexOf(".")).equals(".txt"))
+    	{
+    		qListP = new QuestionListPanel();
+    		PANELS[4]= qListP;
+    		declareFile(f);
+    		declareEdit(edit);
+    	}
+    	setUpGamePanels();
+        
+    	
+    	cards.show(this, panel);
     }
-    private void declareFile(File file)
+    private void declareFile(File f)
     {
-    	qListP.setFile(file);
-        aP.setFile(file);
-        qP.setFile(file);
+
+    		qListP.setFile(f);
+    		aP.setFile(f);
+    		qP.setFile(f);
+    	
     }
     private void declareEdit(boolean edit)
     {

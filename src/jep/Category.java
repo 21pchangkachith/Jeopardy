@@ -19,7 +19,7 @@ public class Category implements Serializable
      * the category names. The String variable, 'name' sets the name of each
      * question in 'questionSet'
      */
-    private Question[] questionSet;
+    public Question[] questionSet;
     private String name;
     /**
      * Sets the value of 'name', and the length of 'questionSet', then the
@@ -74,7 +74,7 @@ public class Category implements Serializable
      */
     public Question getQuestion(int index)
     {
-        return questionSet[index];
+    	return questionSet[index];
     }
     /**
      * Returns the String variable 'name'
@@ -86,6 +86,10 @@ public class Category implements Serializable
     public String getName()
     {
         return name;
+    }
+    public String toString()
+    {
+    	return name;
     }
 
 }

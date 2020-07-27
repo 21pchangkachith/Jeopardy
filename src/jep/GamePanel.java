@@ -2,6 +2,7 @@ package jep;
 
 import javax.swing.*;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,16 +16,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GamePanel extends JPanel{
+
 	/**
-	 * 
-	 */
-	/**
-     * int numDailyDoubles the number of daily doubles, easily accessible in case changes are required during maintenance
+     * 2 default value
      */
     public static int numDailyDoubles = 2;
+    /**
+     * 6 default value
+     */
+    public static int numTeams =  6;
 	private static final long serialVersionUID = 983369563163169425L;
 	protected Color moneyColor, categoryColor, questionColor, buttonColor, categoryBackColor, buttonBackColor;
-	protected File file;
+	protected static File file;
 	protected Map<TextAttribute, Integer> fontAttributes; 
     protected Font boldUnderline;
     public static String defaultPath = "";
@@ -36,7 +39,9 @@ public class GamePanel extends JPanel{
 	    fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 	    boldUnderline = new Font("New Times Roman",Font.BOLD, 28).deriveFont(fontAttributes);
 		moneyColor = new Color(244, 197, 79);
-		categoryColor = Color.WHITE; 
+	       	//new Color(246, 204, 117));
+		categoryColor = Color.RED;
+				//Color.WHITE; 
 				//new Color(210, 45, 45);
 		questionColor = Color.WHITE;
 		buttonColor = new Color(21, 43, 141);
@@ -44,8 +49,13 @@ public class GamePanel extends JPanel{
 		categoryBackColor = new Color(252, 255, 175);
 				//new Color(21, 43, 141);
 				//new Color(47, 66, 147);
-	    file = null;
 	    setOpaque(false);
+	}
+	protected void removeBackground(JButton button)
+	{
+        button.setOpaque(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
 	}
 	protected String getValue(String str)
 	{
@@ -55,17 +65,40 @@ public class GamePanel extends JPanel{
 			return(Integer.toString(numDailyDoubles));
 		case "default_path":
 			return(defaultPath);
-		}	
+		case "num_teams":
+			return(Integer.toString(numTeams));
+		}
 		return "FAILED TO FIND VALUE!";
 	}
-	protected void setValue(String str, String value)
+	protected void setValue(String str, String value) throws Exception
 	{
 		switch(str)
 		{
 		case "num_daily_doubles":
-			numDailyDoubles = Integer.parseInt(value);
+			int doubles = Integer.parseInt(value);
+			if(doubles>25||doubles<0)
+			{
+				throw new IllegalArgumentException("Value entered is not within the range 0-25");
+			}
+			else
+			{
+				numDailyDoubles = doubles;
+			}
+			break;
 		case "default_path":
 			defaultPath=value;
+			break;
+		case "num_teams":
+			int teams = Integer.parseInt(value);
+			if(teams>10||teams<0)
+			{
+				throw new IllegalArgumentException("Value entered is not within the range 0-10");
+			}
+			else
+			{
+				numTeams = teams;
+			}
+			break;
 		}	
 	}
 	protected void handleException(Exception ex, String message)
@@ -73,6 +106,7 @@ public class GamePanel extends JPanel{
 		StringWriter sw = new StringWriter();
     	PrintWriter pw = new PrintWriter(sw);
     	ex.printStackTrace(pw);
+    	ex.printStackTrace();
         JOptionPane.showMessageDialog(new JFrame(), message + sw.toString());
 	}
 	protected void handleException(Exception ex)
@@ -83,10 +117,10 @@ public class GamePanel extends JPanel{
 	{
         button.setPreferredSize(new Dimension(200,100));
         button.setFont(new Font("Times New Roman", Font.BOLD, 25));
-        button.setForeground(categoryColor);
+        button.setForeground(buttonColor);
         button.setBackground(buttonBackColor);
         button.setMargin(new Insets(0, 10, 0, 10));
-        button.setForeground(buttonColor);
+        
 	}
 	protected void adjustMenuLabel(JLabel label, int size)
 	{

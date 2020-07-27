@@ -51,11 +51,13 @@ public class CreditsPanel extends AuxiliaryPanel
 		adjustMenuLabel(creatorLabels[i], 25);
 		creatorLabels[i].setHorizontalAlignment(JLabel.CENTER);
 	}
+	
+	//If you are a dev working from this project, update my tag to second version.
 	private void fillLabels() {
-		creatorLabels[0] = new JLabel("Phoenix Changkachith");
-        creatorLabels[1] = new JLabel("Siddhant Gupta");
-        creatorLabels[2] = new JLabel("Justin Son");
-        creatorLabels[3] = new JLabel("Ethan Shan");
-        creatorLabels[4] = new JLabel("Bao Nguyen");
+		creatorLabels[0] = new JLabel("Latest Version: Phoenix Changkachith");
+        creatorLabels[1] = new JLabel("First Version: Siddhant Gupta");
+        creatorLabels[2] = new JLabel("First Version: Justin Son");
+        creatorLabels[3] = new JLabel("First Version: Ethan Shan");
+        creatorLabels[4] = new JLabel("First Version: Bao Nguyen");
 	}
 }

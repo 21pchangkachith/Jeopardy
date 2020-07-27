@@ -18,10 +18,6 @@ public class LoadPanel extends GamePanel
 	 */
 	private static final long serialVersionUID = 7502054283100731489L;
     /**
-     * JFileChooser fc the filechooser that allows the user to open a GUI and pick which file they want to load
-     */
-    private JFileChooser fc;
-    /**
      * JButton playButton the button that the user clicks to play the game
      */
     private JButton playButton;
@@ -41,18 +37,7 @@ public class LoadPanel extends GamePanel
     	super();
         GridBagConstraints c = new GridBagConstraints();
         
-        fc = new JFileChooser();
-        FileFilter filter = new FileNameExtensionFilter("TXT file", "txt");
-        fc.setFileFilter(filter);
-        fc.setAcceptAllFileFilterUsed(false);
-        try
-        {
-            fc.setCurrentDirectory(new File(Driver.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath() + "jep" + System.getProperty("file.separator")+ "GameFiles" + System.getProperty("file.separator")+ "GameSets" + System.getProperty("file.separator")));
-        }
-        catch(Exception ex)
-        {
-            handleException(ex);
-        }
+
         JButton selectButton = new JButton("Select");
         selectButton.addActionListener(new SelectListener());
         
@@ -111,14 +96,35 @@ public class LoadPanel extends GamePanel
          */
         public void actionPerformed(ActionEvent e)
         {
-            
+            JFileChooser fc = new JFileChooser();
+            FileFilter filter = new FileNameExtensionFilter("TXT/JPSET file", "txt", "sav");
+            fc.setFileFilter(filter);
+            fc.setAcceptAllFileFilterUsed(false);
+            try
+            {
+                fc.setCurrentDirectory(new File(defaultPath));
+            }
+            catch(Exception ex)
+            {
+                handleException(ex);
+            }
             int returnVal = fc.showOpenDialog(null);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) 
             {
-                file = fc.getSelectedFile();
+            	File temp = fc.getSelectedFile();
+            	if(temp.getPath().substring(temp.getPath().lastIndexOf(".")).equals(".sav"))
+            	{
+            		
+            		DefaultPanel.loadSavedGame(fc.getSelectedFile());
+            	}
+            	else
+            	{
+            		
+            		editButton.setEnabled(true);
+            	}
+            	file = fc.getSelectedFile();
                 playButton.setEnabled(true);
-                editButton.setEnabled(true);
             }
             else
             {

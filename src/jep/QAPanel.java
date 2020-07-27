@@ -55,7 +55,6 @@ public class QAPanel extends GamePanel{
     	setOpaque(false);
         fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
     	
-        file = null;
         edit=false;
         currQues=null;
 
@@ -63,7 +62,10 @@ public class QAPanel extends GamePanel{
 
         editArea = makeQuestionArea();
         editArea.setOpaque(true);
-        editArea.setForeground(Color.RED);
+        //editArea.setForeground(Color.RED);
+      //  editArea.setBackground(categoryBackColor);
+        editArea.setForeground(buttonColor);
+        editArea.setBackground(buttonBackColor);
         
         content = makeQuestionArea();
         content.setEditable(false);
@@ -111,14 +113,15 @@ public class QAPanel extends GamePanel{
 
         
         footerHolder = new JPanel();
-        footerHolder.setLayout(new GridLayout(0,6));
+        footerHolder.setLayout(new GridLayout(0,numTeams));
         ((GridLayout)footerHolder.getLayout()).setVgap(20);
-        int[] scores = QuestionListPanel.getScores();
+       // int[] scores = DefaultPanel.getScores();
 
-        pointLabels= new JLabel[6];
-        for(int i=0; i<6; i++)
+        pointLabels= new JLabel[numTeams];
+        for(int i=0; i<numTeams; i++)
         {
-            pointLabels[i]= new JLabel("Team " +(i+1)+": "+scores[i]);
+         //   pointLabels[i]= new JLabel("Team " +(i+1)+": "+scores[i]);
+        	pointLabels[i]= new JLabel("Team " +(i+1)+": "+"0");
             pointLabels[i].setFont(new Font("New Times Roman", Font.BOLD, 24));
             pointLabels[i].setForeground(moneyColor);
             footerHolder.add(pointLabels[i]);
@@ -129,12 +132,13 @@ public class QAPanel extends GamePanel{
         c.anchor= GridBagConstraints.LAST_LINE_START;
         c.fill= GridBagConstraints.HORIZONTAL;
         add(footerHolder, c);
-        
-
-        
-
     }
-    
+    protected void setUpSaveButton(JButton button)
+    {
+    	removeBackground(button);
+        button.setForeground(questionColor);
+        button.setFont(new Font("New Times Roman", Font.BOLD, 24).deriveFont(fontAttributes));
+    }
     private JLabel makeInformationLabel(Color cl, int fontSize)
     {
     	JLabel temp = new JLabel("");
@@ -142,6 +146,41 @@ public class QAPanel extends GamePanel{
         temp.setForeground(cl);
         temp.setOpaque(false);
     	return temp;
+    }
+    protected void doEdit()
+    {
+    	try {
+			String line = null;
+			String store = "";
+			String condition = content.getText();
+			if (editArea.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(new JFrame(),
+						"Please do not attempt to save blank questions, it may make the file unreadable");
+				return;
+			}
+			FileReader fileReader = new FileReader(file);
+			Scanner reader = new Scanner(fileReader);
+			do {
+				line = reader.nextLine();
+				store = store + line + System.lineSeparator();
+			} while (!line.equals(condition));
+			store = store.substring(0, store.indexOf(condition));
+			String added = editArea.getText();
+			content.setText(added);
+			store = store + added + System.lineSeparator();
+			while (reader.hasNext()) {
+				line = reader.nextLine();
+				store = store + line + System.lineSeparator();
+			}
+			fileReader.close();
+			reader.close();
+			FileWriter fw = new FileWriter(file);
+			fw.write(store);
+			fw.close();
+			JOptionPane.showMessageDialog(new JFrame(), "Update successful");
+		} catch (Exception ex) {
+			handleException(ex);
+		}
     }
     /**
      * Method setQuestion stores the new question and updates labels to reflect it
@@ -195,8 +234,8 @@ public class QAPanel extends GamePanel{
      */
     public void updateScores()
     {
-        int[] scores= QuestionListPanel.getScores();
-        for(int i=0; i<6; i++)
+        int[] scores= DefaultPanel.getScores();
+        for(int i=0; i<numTeams; i++)
         {
             pointLabels[i].setText("Team " + (i+1) + ": " + scores[i]);
         }

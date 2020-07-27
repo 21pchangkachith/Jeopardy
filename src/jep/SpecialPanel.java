@@ -24,14 +24,12 @@ public class SpecialPanel extends GamePanel
 	 * 
 	 */
 	private static final long serialVersionUID = -1759315044194611683L;
-	JLabel specialLabel;
-    boolean dailyDouble;
-    Question question;
-    JPanel inputBox;
-    JPanel inputInfo;
-    ArrayList<JTextField> amounts;
-    JButton button;
-    JLabel[] scoreLabels;
+	private JLabel specialLabel;
+    private Question question;
+    private JPanel inputBox;
+    private JPanel inputInfo;
+    private ArrayList<JTextField> amounts;
+    private JLabel[] scoreLabels;
     /**
      * @author Phoenix Changkachith
      * @version 2/23/2020
@@ -42,12 +40,12 @@ public class SpecialPanel extends GamePanel
      */
     public SpecialPanel()
     {
+    	super();
     	GridBagConstraints c = new GridBagConstraints();
     	setOpaque(false);
         setLayout(new GridBagLayout());
         setLayout(new GridBagLayout());
         question=null;
-        dailyDouble=true;
         
 
         amounts = new ArrayList<JTextField>();
@@ -57,7 +55,7 @@ public class SpecialPanel extends GamePanel
         backButton.setOpaque(false);
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);
-        backButton.addActionListener(new BackListener());
+        backButton.addActionListener(new Listener("QuestionListPanel"));
         
         c.gridy=0;
         c.gridx=0;
@@ -70,7 +68,7 @@ public class SpecialPanel extends GamePanel
         
         specialLabel = new JLabel("");
         specialLabel.setFont(new Font("New Times Roman", Font.BOLD, 50));
-        specialLabel.setForeground(new Color(246, 204, 117));
+        specialLabel.setForeground(moneyColor);
         c.gridx++;
         c.insets = new Insets(10, 0, 0, 30);
         add(specialLabel, c);
@@ -82,7 +80,6 @@ public class SpecialPanel extends GamePanel
         ((GridLayout)inputInfo.getLayout()).setVgap(50);
         ((GridLayout)inputInfo.getLayout()).setHgap(50);
         inputInfo.setOpaque(false);
-        inputInfo.setForeground(Color.RED);
         
         
         
@@ -115,29 +112,26 @@ public class SpecialPanel extends GamePanel
         Map<TextAttribute, Integer> fontAttributes = new HashMap<TextAttribute, Integer>();
         fontAttributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         
-        button = new JButton("Go to question");
+        JButton button = new JButton("Go to question");
         button.setPreferredSize(new Dimension(800,100));
         button.setFont(new Font("New Times Roman", Font.BOLD, 25).deriveFont(fontAttributes));
-        button.setForeground(Color.RED);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setOpaque(false);
-        button.addActionListener(new Listener());
+        button.setForeground(questionColor);
+        removeBackground(button);
+        button.addActionListener(new SpecialListener());
         
         c.gridy=2;
         c.anchor= GridBagConstraints.LAST_LINE_START;
         c.fill= GridBagConstraints.HORIZONTAL;
         add(button, c);
         
-        scoreLabels = new JLabel[6];
+        scoreLabels = new JLabel[numTeams];
         JPanel scoreHolder = new JPanel();
         scoreHolder.setLayout(new GridLayout(1,5));
-        int[] scores = QuestionListPanel.getScores();
         for(int i=0; i<scoreLabels.length; i++)
         {
-            scoreLabels[i] = new JLabel("Team "+(i+1)+": "+scores[i]);
+        	scoreLabels[i] = new JLabel("Team "+(i+1)+": "+"0");
             scoreLabels[i].setFont(new Font("New Times Roman", Font.BOLD, 24));
-            scoreLabels[i].setForeground(new Color(246, 204, 117));
+            scoreLabels[i].setForeground(moneyColor);
             scoreLabels[i].setOpaque(false);
             scoreHolder.add(scoreLabels[i]);
         }
@@ -160,8 +154,8 @@ public class SpecialPanel extends GamePanel
     }
     public void updateScores()
     {
-        int[] scores= QuestionListPanel.getScores();
-        for(int i=0; i<6; i++)
+        int[] scores= DefaultPanel.getScores();
+        for(int i=0; i<numTeams; i++)
         {
             scoreLabels[i].setText("Team " + (i+1) + ": " + scores[i]);
         }
@@ -173,13 +167,11 @@ public class SpecialPanel extends GamePanel
     {
         inputBox.removeAll();
         inputInfo.removeAll();
-        dailyDouble=isDailyDouble;
         ArrayList<String> info= new ArrayList<String>();
         amounts = new ArrayList<JTextField>();
         if(isDailyDouble) 
         {   
             specialLabel.setText("Daily Double!");
-
             info.add("      Bet Amount: ");
             
         }
@@ -197,7 +189,7 @@ public class SpecialPanel extends GamePanel
                 handleException(ex, "Error with playing sound.");
                 ex.printStackTrace();
             }
-            for(int i=0; i<6; i++)
+            for(int i=0; i<numTeams; i++)
             {
                 info.add("       Team "+(i+1)+" Bets: ");
             }
@@ -209,8 +201,8 @@ public class SpecialPanel extends GamePanel
             JLabel amountInfo = new JLabel(info.get(i));
             amountInfo.setFont(new Font("New Times Roman", Font.BOLD, 25));
             amountInfo.setVisible(true);
-            amountInfo.setForeground(Color.RED);
-
+            amountInfo.setForeground(buttonBackColor);
+            
             JPanel flow = new JPanel();
             flow.setLayout(new GridBagLayout());
             flow.setOpaque(false);
@@ -221,6 +213,8 @@ public class SpecialPanel extends GamePanel
             amount.setPreferredSize(dim);
             amount.setMaximumSize(dim);
             amount.setVisible(true);
+            amount.setBackground(buttonBackColor);
+            amount.setForeground(buttonColor);
             flow.add(amount);
             inputBox.add(flow);
 
@@ -229,14 +223,7 @@ public class SpecialPanel extends GamePanel
         }
         
     }
-    private class BackListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            Driver.switchPanels("QuestionListPanel");
-        }
-    }
-    private class Listener implements ActionListener
+    private class SpecialListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e)
         {
@@ -252,7 +239,7 @@ public class SpecialPanel extends GamePanel
                 }
                 else
                 {
-                    int[] values = new int[6];
+                    int[] values = new int[numTeams];
                     for(int i=0; i<values.length; i++)
                     {
                         values[i]= Math.abs(Integer.parseInt(amounts.get(i).getText()));

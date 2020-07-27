@@ -1,6 +1,10 @@
 
 package jep;
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -8,7 +12,6 @@ import java.util.*;
 /**
  * Sets up questions based on the Jeopardy set
  *
- * @author Siddhant Gupta
  * @author Phoenix Changkachith
  * @version 2/23/2020
  * @teacher Mr. Coglianese
@@ -20,14 +23,10 @@ public class QuestionListPanel extends GamePanel
 	 * 
 	 */
 	private static final long serialVersionUID = -7858456204393013516L;
-	/**
-     * JPanel questionHolder the JPanel that holds all the question buttons
-     */
-    private JPanel questionHolder;
     /**
      * Category[] categoryList the array of 5 categories in the game
      */
-    private Category[] categoryList; 
+    public Category[] categoryList; 
     /**
      * Question finalJeopardy the final Jeopardy question
      */
@@ -35,15 +34,15 @@ public class QuestionListPanel extends GamePanel
     /**
      * int[] scores the array that stores the points of each team
      */
-    private static int[] scores = new int[6];
+    private int[] scores;
     /**
      * JLabel[] scoreLabels the array that stores the labels which display the point values of each team
      */
-    private static JLabel[] scoreLabels;
+    private JLabel[] scoreLabels;
     /**
      * JLabel[] categoryLabels the array of JLabels that stores the category names
      */
-    private JLabel[] categoryLabels;
+    public JTextPane[] categoryLabels;
     /**
      * JTextField[] categoryEdits the array of JTextFields that are used when edit mode is enabled
      */
@@ -64,17 +63,21 @@ public class QuestionListPanel extends GamePanel
     public QuestionListPanel()
     {
     	super();
-
-         
+        scores  = new int[numTeams];
         edit=false;
         // initializes int 'Question' array
         setLayout(new BorderLayout());
         categoryList = new Category[5];
-        categoryLabels = new JLabel[5];
+        categoryLabels = new JTextPane[5];
         categoryEdits = new JTextField[5];
         for(int i=0; i<categoryLabels.length; i++)
         {
-            categoryLabels[i]= new JLabel("");
+            categoryLabels[i]= new JTextPane();
+            categoryLabels[i].setEditable(false);
+            StyledDocument doc = categoryLabels[i].getStyledDocument();
+            SimpleAttributeSet center = new SimpleAttributeSet();
+            StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+            doc.setParagraphAttributes(0, doc.getLength()-1, center, false);
             setUpCategory(categoryLabels[i]);
             
             
@@ -88,7 +91,7 @@ public class QuestionListPanel extends GamePanel
         }
         finalJeopardy = new Question();
         //adding point displays
-        scoreLabels = new JLabel[6];
+        scoreLabels = new JLabel[numTeams];
         JPanel scoreHolder = new JPanel();
         scoreHolder.setLayout(new GridLayout(1,5));
         for(int i=0; i<scoreLabels.length; i++)
@@ -117,7 +120,7 @@ public class QuestionListPanel extends GamePanel
 
         }
         
-        questionHolder = new JPanel();
+        JPanel questionHolder = new JPanel();
         GridLayout questionLayout = new GridLayout(7, 5);
         questionLayout.setVgap(20);
         questionLayout.setHgap(2);
@@ -145,14 +148,14 @@ public class QuestionListPanel extends GamePanel
         
         JLabel jepLabel = new JLabel("Jeopardy");
         jepLabel.setFont(new Font("New Times Roman", Font.BOLD, 80));
-        jepLabel.setForeground(Color.YELLOW);
+        jepLabel.setForeground(moneyColor);
         topPanel.add(jepLabel);
         
         JButton button = new JButton("Final Jeopardy");
         button.addActionListener(new Listener(25));
        
         button.setFont(boldUnderline);
-        button.setForeground(Color.YELLOW);
+        button.setForeground(moneyColor);
         removeBackground(button);
         topPanel.add(button);
         
@@ -162,13 +165,8 @@ public class QuestionListPanel extends GamePanel
 
         add(questionHolder, BorderLayout.CENTER);
     }
-	private void removeBackground(JButton button) {
-		button.setContentAreaFilled(false);
-		button.setOpaque(false);
-		button.setBorderPainted(false);
-	}
 	private void initDailyDoubles() {
-		indexOfDailyDoubles= new int[DefaultPanel.numDailyDoubles];
+		indexOfDailyDoubles= new int[Math.min(25, DefaultPanel.numDailyDoubles)];
 	        for(int i=0; i<indexOfDailyDoubles.length; i++)
 	        {
 	            int index= (int)(25*Math.random());
@@ -181,6 +179,7 @@ public class QuestionListPanel extends GamePanel
 	                {
 	                    index= (int)(25*Math.random());
 	                    indexOfDailyDoubles[i]=index;
+	                    repI= i-1;
 	                }
 	            }
 	            System.out.println("INDEX" + index);
@@ -204,9 +203,13 @@ public class QuestionListPanel extends GamePanel
      * @version 3/2/2020
      * @author Phoenix
      */
-    private class EditListener implements ActionListener
+    private class EditListener implements ActionListener, Serializable
     {
         /**
+		 * 
+		 */
+		private static final long serialVersionUID = 4822808686786405746L;
+		/**
          * int index the index of the category
          */
         private int index;
@@ -316,7 +319,7 @@ public class QuestionListPanel extends GamePanel
      * @param newValue the new value of the team's score
      * @param teamNum the number the team belongs to
      */
-    public static void setScore(int newValue, int teamNum)
+    public void setScore(int newValue, int teamNum)
     {
         scores[teamNum]= newValue;
         scoreLabels[teamNum].setText("Team "+(teamNum+1)+": "+newValue);
@@ -328,7 +331,7 @@ public class QuestionListPanel extends GamePanel
      * @param teamNum the team number of a team
      * @return the score of the team
      */
-    public static int getScore(int teamNum)
+    public int getScore(int teamNum)
     {
         return scores[teamNum];
     }
@@ -339,9 +342,13 @@ public class QuestionListPanel extends GamePanel
      * @version 3/2/2020
      * @author Phoenix
      */
-    private class Listener implements ActionListener
+    private class Listener implements ActionListener, Serializable
     {
         /**
+		 * 
+		 */
+		private static final long serialVersionUID = 7467126500477520068L;
+		/**
          * int index the index of the question
          */
         int index;
@@ -526,7 +533,7 @@ public class QuestionListPanel extends GamePanel
      *
      * @return the points
      */
-    public static int[] getScores()
+    public int[] getScores()
     {
         return scores;
     }

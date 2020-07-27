@@ -3,7 +3,8 @@
 		"settings":
 		{
 			"num_daily_doubles": "2",
-			"default_path": "/Users/phoenixchangkachith/eclipse-workspace/jeopardy/bin/jep/GameFiles/GameSets"
+			"default_path": "/Users/phoenixchangkachith/eclipse-workspace/jeopardy/bin/jep/GameFiles/GameSets",
+			"num_teams": "6"
 		},
 		"colors":
 		{

@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +28,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 	 */
 	private static final long serialVersionUID = 3971966470559219178L;
 	private JButton[] settingsButton;
+	private final int numSettings = 3;
 	private JSONObject settings;
 	private InputStream stream;
 	public SettingsPanel() {
@@ -39,6 +39,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 			JSONTokener tokener = new JSONTokener(stream);
 			settings = (JSONObject) tokener.nextValue();
 			numDailyDoubles = ((JSONObject)settings.get("settings")).getInt("num_daily_doubles");
+			numTeams = ((JSONObject)settings.get("settings")).getInt("num_teams");
 			defaultPath = (String)((JSONObject)settings.get("settings")).get("default_path");
 			
 		}
@@ -46,7 +47,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 		{
 			handleException(e, "Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
 		}
-        settingsButton = new JButton[5];
+        settingsButton = new JButton[numSettings];
 		fillButtons();
         populatePanel(contentPanel);
         
@@ -73,9 +74,8 @@ public class SettingsPanel extends AuxiliaryPanel {
 		settingsButton[0].addActionListener(new SettingsListener("num_daily_doubles"));
         settingsButton[1] = new JButton("Change default path");
         settingsButton[1].addActionListener(new SettingsListener("default_path"));
-        settingsButton[2] = new JButton("Change # Daily Doubles");
-        settingsButton[3] = new JButton("Change # Daily Doubles");
-        settingsButton[4] = new JButton("Change # Daily Doubles");
+        settingsButton[2] = new JButton("Change # Teams");
+        settingsButton[2].addActionListener(new SettingsListener("num_teams"));
 	}
 	private class SettingsListener implements ActionListener
 	{
@@ -94,7 +94,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 			}
 			else
 			{
-				userInput = JOptionPane.showInputDialog(new JFrame(), "Current value:" + getValue(settingName) + "\nEnter new value:");
+				userInput = JOptionPane.showInputDialog(new JFrame(), "Current " + settingName.replaceAll("_", " ") + ": "+ getValue(settingName) + "\nEnter new value:");
 			}
 			
 			try
@@ -121,14 +121,21 @@ public class SettingsPanel extends AuxiliaryPanel {
 				setValue(settingName, userInput);
 				JOptionPane.showMessageDialog(new JFrame(), "Changes saved. Restart to see effects");
 			}
+			catch(IllegalArgumentException ex)
+			{
+				JOptionPane.showMessageDialog(new JFrame(), ex.getMessage());
+			}
 			catch(Exception ex)
 			{
 				if(userInput.isBlank())
 				{
 					JOptionPane.showMessageDialog(new JFrame(), "Please do not attempt to save blank fields.");
 				}
-				handleException(ex);
-				ex.printStackTrace();
+				else
+				{
+					handleException(ex);
+					ex.printStackTrace();
+				}
 			}
 		}
 		private String setDirectoryViaUI() {

@@ -275,4 +275,8 @@ public class Question implements Serializable
     {
         return isDailyDouble||isFinalJeopardy;
     }
+    public String toString()
+    {
+    	return ques;
+    }
 }
