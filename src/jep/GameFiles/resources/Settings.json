@@ -1,16 +1,1 @@
-
-	{
-		"settings":
-		{
-			"num_daily_doubles": "2",
-			"default_path": "/Users/phoenixchangkachith/eclipse-workspace/jeopardy/bin/jep/GameFiles/GameSets",
-			"num_teams": "6"
-		},
-		"colors":
-		{
-			"money_color": "244,197,79",
-			"category_color": "244,197,79",
-			"question_color": "244,197,79",
-			"button_color": "244,197,79"
-		}
-	}
+{"settings":{"num_daily_doubles":"3","num_teams":"6","default_path":"/Users/phoenixchangkachith/eclipse-workspace/jeopardy/bin/jep/GameFiles/GameSets"},"colors":{"button_color":"244,197,79","money_color":"244,197,79","category_color":"244,197,79","question_color":"244,197,79"}}

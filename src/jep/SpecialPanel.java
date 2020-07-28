@@ -181,12 +181,13 @@ public class SpecialPanel extends GamePanel
             
             try {
             	InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/music/Jeopardy.wav");
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(stream);
+            	InputStream bufferedStream = new BufferedInputStream(stream);
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
                 clip.start();
             } catch(Exception ex) {
-                handleException(ex, "Error with playing sound.");
+                handleException(ex, "Error with playing sound. \n\n");
                 ex.printStackTrace();
             }
             for(int i=0; i<numTeams; i++)

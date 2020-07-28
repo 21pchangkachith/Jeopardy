@@ -3,17 +3,16 @@ package jep;
 
 import java.awt.Dimension;
 
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,7 +34,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 		super();
 		try {
 
-			stream = getClass().getResourceAsStream("/jep/GameFiles/resources/Settings.json");
+			stream = new FileInputStream(new File("./settings.json"));
 			JSONTokener tokener = new JSONTokener(stream);
 			settings = (JSONObject) tokener.nextValue();
 			numDailyDoubles = ((JSONObject)settings.get("settings")).getInt("num_daily_doubles");
@@ -43,9 +42,25 @@ public class SettingsPanel extends AuxiliaryPanel {
 			defaultPath = (String)((JSONObject)settings.get("settings")).get("default_path");
 			
 		}
+		catch(FileNotFoundException e)
+		{
+			try
+			{
+				stream = getClass().getResourceAsStream("/jep/GameFiles/resources/Settings.json");
+				JSONTokener tokener = new JSONTokener(stream);
+				settings = (JSONObject) tokener.nextValue();
+				numDailyDoubles = ((JSONObject)settings.get("settings")).getInt("num_daily_doubles");
+				numTeams = ((JSONObject)settings.get("settings")).getInt("num_teams");
+				defaultPath = (String)((JSONObject)settings.get("settings")).get("default_path");
+			}
+			catch(Exception ex)
+			{
+				handleException(ex);
+			}
+		}
 		catch(Exception e)
 		{
-			handleException(e, "Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
+			handleException(e);
 		}
         settingsButton = new JButton[numSettings];
 		fillButtons();
@@ -88,7 +103,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 		public void actionPerformed(ActionEvent e)
 		{
 			String userInput = null;
-			if(settingName=="default_path")
+			if(settingName.equals("default_path"))
 			{
 				userInput = setDirectoryViaUI();
 			}
@@ -111,9 +126,8 @@ public class SettingsPanel extends AuxiliaryPanel {
 						settingType.putOpt(settingName, userInput);
 					}
 				}
-				String path = getClass().getResource("/jep/GameFiles/resources/Settings.json").toURI().getPath();
-				File file =  new File(path);
-				OutputStream out = new FileOutputStream(file);
+			    OutputStream out = new FileOutputStream(new File("./settings.json"));
+				stream.transferTo(out);
 				OutputStreamWriter writer = new OutputStreamWriter(out);
 				settings.write(writer);
 				writer.close();
@@ -124,6 +138,26 @@ public class SettingsPanel extends AuxiliaryPanel {
 			catch(IllegalArgumentException ex)
 			{
 				JOptionPane.showMessageDialog(new JFrame(), ex.getMessage());
+			}
+			catch(FileNotFoundException ex)
+			{
+				try
+				{
+					String path = getClass().getResource("/jep/GameFiles/resources/Settings.json").toURI().getPath();
+					File file =  new File(path);
+					OutputStream out = new FileOutputStream(file);
+					OutputStreamWriter writer = new OutputStreamWriter(out);
+					settings.write(writer);
+					writer.close();
+					out.close();
+					setValue(settingName, userInput);
+					JOptionPane.showMessageDialog(new JFrame(), "Changes saved. Restart to see effects");
+				}
+				catch(Exception exc)
+				{
+					handleException(ex);
+					ex.printStackTrace();
+				}
 			}
 			catch(Exception ex)
 			{

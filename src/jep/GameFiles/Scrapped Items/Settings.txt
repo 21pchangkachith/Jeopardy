@@ -1,6 +1,0 @@
-This is the settings file.
-///////////////////////////////
-num_daily_doubles: (2)
-question_color:
-category_color:
-team_buttons_color:

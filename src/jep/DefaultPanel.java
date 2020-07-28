@@ -41,6 +41,7 @@ public class DefaultPanel extends GamePanel
      * 'PANELS' is of JPanel type, and it holds all the panels for the main screen layout of the app, essentially all Panels are static and could therefore be serialized if we wanted.
      */
     private boolean editing;
+    
     private String previousPanel;
     private static JPanel[] PANELS;
     /**
@@ -50,7 +51,11 @@ public class DefaultPanel extends GamePanel
     public DefaultPanel()
     {
     	ImageIcon icon = null;
-    	
+    	try {
+		    UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+		 } catch (Exception e) {
+		            e.printStackTrace();
+		 }
 		try {
 
 			InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/images/BackButtonPicture.PNG");
@@ -62,12 +67,7 @@ public class DefaultPanel extends GamePanel
 			handleException(e, "Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
 		}
 		backButtonIcon = icon;
-		
-		 try {
-			    UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
-			 } catch (Exception e) {
-			            e.printStackTrace();
-			 }
+
 		SettingsPanel settings = new SettingsPanel();
         previousPanel = null;
         editing = false;
@@ -92,7 +92,7 @@ public class DefaultPanel extends GamePanel
 		}
 		catch(Exception e)
 		{
-			System.out.println("Background missing, please replace /GameFiles/resources/images/background.png");
+			JOptionPane.showMessageDialog(new JFrame(), "Background missing, please replace /GameFiles/resources/images/background.png");
 		}
     	g.drawImage(icon.getImage(), 0, 0, null);
     }
@@ -160,7 +160,6 @@ public class DefaultPanel extends GamePanel
     		ois.close();
     		fis.close();
     		file =f;
-    		System.out.println(file==null);
     	}
     	catch(Exception ex)
     	{
@@ -198,7 +197,6 @@ public class DefaultPanel extends GamePanel
         		{
         			try
         			{
-        				System.out.println(file==null);
         				File temp = new File(file.getPath()+".sav");
         				FileOutputStream fos = new FileOutputStream(temp);
         				ObjectOutputStream oos = new ObjectOutputStream(fos);

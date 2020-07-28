@@ -30,7 +30,7 @@ public class GamePanel extends JPanel{
 	protected static File file;
 	protected Map<TextAttribute, Integer> fontAttributes; 
     protected Font boldUnderline;
-    public static String defaultPath = "";
+    public static String defaultPath = ""; 
 	public GamePanel()
 	{
 		super();
