@@ -150,6 +150,12 @@ public class QAPanel extends GamePanel{
     protected void doEdit()
     {
     	try {
+    		String added = editArea.getText();
+    		if(added.contains("\n")||added.contains(System.getProperty("line.separator")))
+    		{
+    			JOptionPane.showMessageDialog(new JFrame(), "This program does not currently support empty lines.\n\n If this is an issue, please contact me.");
+    			return;
+    		}
 			String line = null;
 			String store = "";
 			String condition = content.getText();
@@ -165,7 +171,7 @@ public class QAPanel extends GamePanel{
 				store = store + line + System.lineSeparator();
 			} while (!line.equals(condition));
 			store = store.substring(0, store.indexOf(condition));
-			String added = editArea.getText();
+			
 			content.setText(added);
 			store = store + added + System.lineSeparator();
 			while (reader.hasNext()) {

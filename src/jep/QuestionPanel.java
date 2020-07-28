@@ -67,6 +67,12 @@ public class QuestionPanel extends QAPanel {
 		editArea.setText(q.getQuestion());
 		content.setText(q.getQuestion());
 	}
+	@Override
+	public void doEdit()
+	{
+		super.doEdit();
+		currQues.setQuestion(editArea.getText());
+	}
 	/**
 	 * Class PointsListener the listener that controls all functions related to
 	 * giving and taking points

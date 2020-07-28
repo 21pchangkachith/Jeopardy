@@ -43,6 +43,7 @@ public class DefaultPanel extends GamePanel
     private boolean editing;
     
     private String previousPanel;
+    public static final String categorySeparator = "#";
     private static JPanel[] PANELS;
     /**
      * 'DefaultPanel' class constructor, instantiates CardLayout object 'cards' and sets up the panels
@@ -188,7 +189,7 @@ public class DefaultPanel extends GamePanel
         	    qP.resetTeamButtons();
         		if(editing && previousPanel.equals("AnswerPanel"))
         		{
-        			aP.changeAnswer();
+        			aP.doEdit();
         		}
         		break;
         	case "QuestionListPanel":

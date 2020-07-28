@@ -182,7 +182,7 @@ public class QuestionListPanel extends GamePanel
 	                    repI= i-1;
 	                }
 	            }
-	            System.out.println("INDEX" + index);
+	            //System.out.println("INDEX" + index);
 	        }
 	}
 
@@ -229,7 +229,19 @@ public class QuestionListPanel extends GamePanel
          */
         public void actionPerformed(ActionEvent e)
         {
+        	
             try{
+            		String catEdit = categoryEdits[index].getText();
+            		if(catEdit.isBlank())
+            		{
+            			JOptionPane.showMessageDialog(new JFrame(), "Please do not save blank categories");
+            			return;
+            		}
+            		else if(catEdit.contains(DefaultPanel.categorySeparator))
+            		{
+            			JOptionPane.showMessageDialog(new JFrame(), "This program does not currently support categories using the character " + DefaultPanel.categorySeparator + "\n\nIf necessary, contact me and this can be changed.");
+            			return;
+            		}
                     FileReader fileReader = new FileReader(file);
                     Scanner reader = new Scanner(fileReader);
 
@@ -247,7 +259,7 @@ public class QuestionListPanel extends GamePanel
                     String editedLine = line;
                     String currName= categoryList[index].getName();
                     editedLine= line.substring(0, line.indexOf(currName)); 
-                    editedLine= editedLine + categoryEdits[index].getText();
+                    editedLine= editedLine + catEdit;
                     editedLine= editedLine + line.substring(line.indexOf(currName)+currName.length());
                     categoryList[index].setName(categoryEdits[index].getText());
                     store = store + editedLine + System.lineSeparator();
@@ -458,7 +470,7 @@ public class QuestionListPanel extends GamePanel
                         isQuestion = true;
                         innerIndex++;
                     }
-                }
+                }            
                 categoryIndex++;
             }
             //set daily doubles
@@ -519,9 +531,9 @@ public class QuestionListPanel extends GamePanel
      */
     private void processCategories(String s, int index)
     {
-            String name = s.substring(0, s.indexOf(","));
+            String name = s.substring(0, s.indexOf(DefaultPanel.categorySeparator));
             categoryList[index] = new Category(name);
-            int next = s.indexOf(",")+2;
+            int next = s.indexOf(DefaultPanel.categorySeparator)+2;
             if(s.length()>next)
             {
                 String remainder = s.substring(next);

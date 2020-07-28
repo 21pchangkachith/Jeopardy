@@ -53,11 +53,12 @@ public class AnswerPanel extends QAPanel {
 			add(back, c);
 		}
 	}
-
-	public void changeAnswer() {
-		if (edit) {
-			doEdit();
-		}
+	@Override
+	public void doEdit()
+	{
+		super.doEdit();
+		currQues.setAnswer(editArea.getText());
 	}
+
 
 }

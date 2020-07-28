@@ -125,8 +125,6 @@ public class ParsePanel extends GamePanel
                 	HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(powerpoint));
                 	SlideShowExtractor<HSLFShape, HSLFTextParagraph> extractor = new SlideShowExtractor<>(ppt);
                 	String pptContents = extractor.getText();
-                	//String pptName = powerpoint.getName();
-                	//pptName = pptName.substring(0, pptName.lastIndexOf("."))+".txt";
                 	extractor.close();
                 	
                 	try
@@ -145,7 +143,7 @@ public class ParsePanel extends GamePanel
 	                    String lines = createSetFromPPT(pptContents);
 	                    fw.write(lines);
 	                    fw.close();
-	                    JOptionPane.showMessageDialog(new JFrame(), "Reading from powerpoint successful.");
+	                    JOptionPane.showMessageDialog(new JFrame(), "Reading from powerpoint successful. \n\nFind the converted file in the same folder as the powerpoint");
 	                }
                 	catch(Exception innerEx)
                 	{
@@ -289,7 +287,7 @@ public class ParsePanel extends GamePanel
     	String categories = "";
     	for(int i=0; i<confirmedCats.length; i++)
     	{
-    		categories+=confirmedCats[i]+", ";
+    		categories+=confirmedCats[i]+DefaultPanel.categorySeparator+" ";
     	}
     	return categories;
     }
@@ -375,8 +373,11 @@ public class ParsePanel extends GamePanel
         {
             String template = "";
             template = header;
-            template = template + "Categories:" + System.lineSeparator();
-            template = template + "Category1, Category2, Category3, Category4, Category5," + System.lineSeparator();
+            template+= "Category1" + DefaultPanel.categorySeparator;
+            template+= " Category2" +DefaultPanel.categorySeparator;
+            template+= " Category3" + DefaultPanel.categorySeparator;
+            template+= " Category4" + DefaultPanel.categorySeparator;
+            template+= " Category5" + DefaultPanel.categorySeparator + System.lineSeparator();
             template = template + "Questions:" + System.lineSeparator();
             for(int category=1; category<=5; category++)
             {
