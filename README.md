@@ -1,33 +1,44 @@
 PROJECT TITLE: Jeopardy (revised)
-DATE: July 28, 2020
-LATEST VERSION: v3.1
-AUTHOR: Phoenix Changkachith
+DATE: 
+	
+	July 28, 2020
+LATEST VERSION: 
+	
+	v3.1
+AUTHOR: 
+	
+	Phoenix Changkachith
 
-REQUIREMENTS TO RUN: Java RTE. Download it at: 
-https://java.com/en/download/
+REQUIREMENTS TO RUN: 
+	
+	Java RTE. Download it at: 
+	https://java.com/en/download/
 
-HOW TO START: Execute the jar file by double clicking. If this does not work:
-	1) Try executing start.bat
-	2) Try executing start.sh
+HOW TO START:
+
+	Execute the jar file by double clicking. If this does not work:
+		1) Try executing start.bat
+		2) Try executing start.sh
 
 
 PURPOSE:
-This project was started with the intention of improving the system used with powerpoints.
-Some quality of life improvements that this project includes are:
-	Ability to digitally back up one copy of a gameset that was played 
-	Points counter.
-	New UI.
-	Customizable number of daily doubles.
-	Baseline for new features (team names, leaderboards, etc.) 
+
+	This project was started with the intention of improving the system used with powerpoints.
+	Some quality of life improvements that this project includes are:
+		Ability to digitally back up one copy of a gameset that was played 
+		Points counter.
+		New UI.
+		Customizable number of daily doubles.
+		Baseline for new features (team names, leaderboards, etc.) 
 
 HOW TO USE:
+
 	Creating a new set:
 		1) Play>Create new set 
 		2) Enter name of desired set in yellow textbox
 		3) Click "Create new set:" 
 		4) Navigate to the folder you want to set to be created in
 		5) Press "Open"
-		
 	Importing sets from powerpoint:
 		1) Play>Create new set
 		2) Click "Import set"
