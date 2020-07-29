@@ -101,18 +101,6 @@ public class GamePanel extends JPanel{
 			break;
 		}	
 	}
-	protected void handleException(Exception ex, String message)
-	{
-		StringWriter sw = new StringWriter();
-    	PrintWriter pw = new PrintWriter(sw);
-    	ex.printStackTrace(pw);
-    	ex.printStackTrace();
-        JOptionPane.showMessageDialog(new JFrame(), message + sw.toString());
-	}
-	protected void handleException(Exception ex)
-	{
-		handleException(ex, "Whoops, something went wrong. Record this log below, and someone will know what to do with it. \n\n");
-	}
 	protected void adjustMenuButton(JButton button)
 	{
         button.setPreferredSize(new Dimension(200,100));
@@ -150,7 +138,7 @@ public class GamePanel extends JPanel{
     	}
     	public void actionPerformed(ActionEvent e)
     	{
-    		Driver.switchPanels(panel);
+    		DefaultPanel.getManager().toPanel(panel);
     	}
     }
     

@@ -5,10 +5,12 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import jep.utilities.Editor;
+import jep.utilities.ExceptionHandler;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 /**
  * Sets up questions based on the Jeopardy set
  *
@@ -242,42 +244,12 @@ public class QuestionListPanel extends GamePanel
             			JOptionPane.showMessageDialog(new JFrame(), "This program does not currently support categories using the character " + DefaultPanel.categorySeparator + "\n\nIf necessary, contact me and this can be changed.");
             			return;
             		}
-                    FileReader fileReader = new FileReader(file);
-                    Scanner reader = new Scanner(fileReader);
-
-                    String line = null;
-                    String store = "";
-                    String condition= "Categories:";
-                    do
-                    {
-                        line = reader.nextLine();
-                        store = store + line + System.lineSeparator();
-                    }
-                    while(!line.contains(condition));
-                    //arrived at categories list
-                    line = reader.nextLine();
-                    String editedLine = line;
-                    String currName= categoryList[index].getName();
-                    editedLine= line.substring(0, line.indexOf(currName)); 
-                    editedLine= editedLine + catEdit;
-                    editedLine= editedLine + line.substring(line.indexOf(currName)+currName.length());
-                    categoryList[index].setName(categoryEdits[index].getText());
-                    store = store + editedLine + System.lineSeparator();
-                    while(reader.hasNext())
-                    {
-                        line=reader.nextLine();
-                        store = store + line + System.lineSeparator();
-                    }
-                    fileReader.close();
-                    reader.close();
-                    FileWriter fw = new FileWriter(file);
-                    fw.write(store);
-                    fw.close();
-                    JOptionPane.showMessageDialog(new JFrame(), "Successfully updated categories");
+            		Editor.getEditor().replaceValue(categoryList[index].getName(), catEdit, file);
+            		categoryList[index].setName(catEdit);
                 }
                 catch(Exception ex)
                 {
-                	handleException(ex);
+                	ExceptionHandler.getHandler().handleException(ex);
                 }
         }
     }
@@ -386,11 +358,11 @@ public class QuestionListPanel extends GamePanel
             Question q= findQuestion(index);
             if(!edit&&q.isSpecial())
             {
-                Driver.switchQuestions("SpecialPanel", q);
+                DefaultPanel.getManager().toPanel("SpecialPanel", q);
             }
             else
             {
-                Driver.switchQuestions("QuestionPanel", q);
+                DefaultPanel.getManager().toPanel("QuestionPanel", q);
             }
         }
         
@@ -440,57 +412,67 @@ public class QuestionListPanel extends GamePanel
             {
                 line = reader.readLine();
             }
-            while(!line.equals("Categories:"));
+            while(!line.contains("Categories:"));
             line = reader.readLine();
             processCategories(line, 0);
             //Skip to Questions
-            while(!line.equals("Questions:"))
+            while(!line.contains("Questions:"))
             {
                 line = reader.readLine();
             }
             line = reader.readLine();
-            //Process the questions
-            int categoryIndex = 1;
-            while(!line.equals("End Questions"))
-            {
-                int innerIndex = 0;
-                boolean isQuestion = true;
-                while(!isIndicator(line = reader.readLine()))
-                {
-                    if(isQuestion) 
-                    {
-                        categoryList[categoryIndex-1].getQuestion(innerIndex).setQuestion(line);
-                        isQuestion = false;
-                    }
-                    else
-                    {
-                        categoryList[categoryIndex-1].getQuestion(innerIndex).setAnswer(line);
-                        categoryList[categoryIndex-1].getQuestion(innerIndex).setOriginalValue((innerIndex+1)*100);
-                        categoryList[categoryIndex-1].getQuestion(innerIndex).setCurrentValue((innerIndex+1)*100);
-                        isQuestion = true;
-                        innerIndex++;
-                    }
-                }            
-                categoryIndex++;
-            }
-            //set daily doubles
-            for(int i=0; i<25; i++)
-            {
-            	findQuestion(i).setDailyDouble(checkDailyDouble(i));
-            }
-            //Process the final jeopardy
-            line=reader.readLine();
-            finalJeopardy.setQuestion(line=reader.readLine());
-            finalJeopardy.setAnswer(line=reader.readLine());
-            finalJeopardy.setFinalJeopardy(true);
+
+            initQuestions(reader, line);
+            declareDailyDoubles();
+            initFinalJeopardy(reader, line);
             //Reader is finished
             reader.close();
         }
         catch(Exception ex)
         {
-        	handleException(ex);
+        	ExceptionHandler.getHandler().handleException(ex);
         }
         fixCategoryLabels();
+    }
+	private void initFinalJeopardy(BufferedReader reader, String line) throws IOException {
+		line=reader.readLine();
+		finalJeopardy.setQuestion(line=reader.readLine());
+		finalJeopardy.setAnswer(line=reader.readLine());
+		finalJeopardy.setFinalJeopardy(true);
+	}
+	private void initQuestions(BufferedReader reader, String line) throws IOException {
+		int categoryIndex = 0;
+		while(!line.equals("End Questions"))
+		{
+		    int innerIndex = 0;
+		    boolean isQuestion = true;
+		    while(!isIndicator(line = reader.readLine()))
+		    {
+		        if(isQuestion) 
+		        {
+		            categoryList[categoryIndex].getQuestion(innerIndex).setQuestion(line);
+		        }
+		        else
+		        {
+		            initAnswer(line, categoryIndex, innerIndex);
+		            innerIndex++;
+		        }
+		        isQuestion = !isQuestion;
+		    }            
+		    categoryIndex++;
+		}
+	}
+	private void initAnswer(String line, int categoryIndex, int innerIndex) {
+		categoryList[categoryIndex].getQuestion(innerIndex).setAnswer(line);
+		categoryList[categoryIndex].getQuestion(innerIndex).setOriginalValue((innerIndex+1)*100);
+		categoryList[categoryIndex].getQuestion(innerIndex).setCurrentValue((innerIndex+1)*100);
+	}
+    private void declareDailyDoubles()
+    {
+    	for(int i=0; i<25; i++)
+        {
+        	findQuestion(i).setDailyDouble(checkDailyDouble(i));
+        }
     }
     /**
      * Method fixCategoryLabels adds the values of categorylabels late, because the names are unknown until the user chooses a game file

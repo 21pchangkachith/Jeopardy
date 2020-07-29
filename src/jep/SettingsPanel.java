@@ -4,7 +4,6 @@ package jep;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,6 +18,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import org.json.*;
+
+import jep.utilities.ExceptionHandler;
+import jep.utilities.UIChooser;
 
 public class SettingsPanel extends AuxiliaryPanel {
 
@@ -55,12 +57,12 @@ public class SettingsPanel extends AuxiliaryPanel {
 			}
 			catch(Exception ex)
 			{
-				handleException(ex);
+				ExceptionHandler.getHandler().handleException(ex);
 			}
 		}
 		catch(Exception e)
 		{
-			handleException(e);
+			ExceptionHandler.getHandler().handleException(e);
 		}
         settingsButton = new JButton[numSettings];
 		fillButtons();
@@ -105,7 +107,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 			String userInput = null;
 			if(settingName.equals("default_path"))
 			{
-				userInput = setDirectoryViaUI();
+				userInput = UIChooser.getUIChooser().getDirectoryViaUI();
 			}
 			else
 			{
@@ -155,7 +157,7 @@ public class SettingsPanel extends AuxiliaryPanel {
 				}
 				catch(Exception exc)
 				{
-					handleException(ex);
+					ExceptionHandler.getHandler().handleException(ex);
 					ex.printStackTrace();
 				}
 			}
@@ -167,30 +169,10 @@ public class SettingsPanel extends AuxiliaryPanel {
 				}
 				else
 				{
-					handleException(ex);
+					ExceptionHandler.getHandler().handleException(ex);
 					ex.printStackTrace();
 				}
 			}
-		}
-		private String setDirectoryViaUI() {
-			String path = null;
-			JFileChooser fc = new JFileChooser();
-			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			try
-			{
-			    fc.setCurrentDirectory(new File(defaultPath));
-			}
-			catch(Exception ex)
-			{
-				handleException(ex);
-			}
-			int returnVal = fc.showOpenDialog(null);
-			if (returnVal == JFileChooser.APPROVE_OPTION) 
-			{
-			    File directory = fc.getSelectedFile();
-			    path = directory.getPath();
-			}
-			return path;
 		}
 	}
 

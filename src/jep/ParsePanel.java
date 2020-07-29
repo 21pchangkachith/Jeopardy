@@ -7,13 +7,19 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import tests.InvalidFormatException;
 
 
 
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
+
+import jep.utilities.ExceptionHandler;
+import jep.utilities.UIChooser;
+
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+
 /**
  * Class ParsePanel the panel used to create new sets from scratch
  *
@@ -88,7 +94,7 @@ public class ParsePanel extends GamePanel
         add(panel, c);
         
     }
-    public JButton createButton(String text, ActionListener listen)
+    private JButton createButton(String text, ActionListener listen)
     {
         JButton button = new JButton(text);
         button.addActionListener(listen);
@@ -110,10 +116,7 @@ public class ParsePanel extends GamePanel
             }
             catch(Exception ex)
             {
-            	StringWriter sw = new StringWriter();
-            	PrintWriter pw = new PrintWriter(sw);
-            	ex.printStackTrace(pw);
-                JOptionPane.showMessageDialog(new JFrame(), "Whoops, something went wrong. Record this log below, and someone will know what to do with it. \n\n"+ sw.toString(), "Failed to import set", JOptionPane.ERROR_MESSAGE);
+            	ExceptionHandler.getHandler().handleException(ex);
             }
             int returnVal = fc.showOpenDialog(null);
 
@@ -147,20 +150,13 @@ public class ParsePanel extends GamePanel
 	                }
                 	catch(Exception innerEx)
                 	{
-                		StringWriter sw = new StringWriter();
-                    	PrintWriter pw = new PrintWriter(sw);
-                    	innerEx.printStackTrace(pw);
-                        JOptionPane.showMessageDialog(new JFrame(), "Whoops, something went wrong processing the ppt. Record this log below, and someone will know what to do with it. \n\n"+ sw.toString());
+                		ExceptionHandler.getHandler().handleException(innerEx, "Whoops, something went wrong processing the ppt. Record this log below, and someone will know what to do with it. \n\n");
                 	}
                 	
                 }
                 catch(Exception ex)
                 {
-                	StringWriter sw = new StringWriter();
-                	PrintWriter pw = new PrintWriter(sw);
-                	ex.printStackTrace(pw);
-                	ex.printStackTrace();
-                    JOptionPane.showMessageDialog(new JFrame(), "Whoops, something went wrong reading the ppt. Record this log below, and someone will know what to do with it. \n\n"+ sw.toString());
+                	ExceptionHandler.getHandler().handleException(ex, "Whoops, something went wrong reading the ppt. Record this log below, and someone will know what to do with it. \n\n");
                 }
             }
             
@@ -168,7 +164,7 @@ public class ParsePanel extends GamePanel
             
     	}
     }
-    private String createSetFromPPT(String pptContents)
+    public String createSetFromPPT(String pptContents)
     {
     	String set = header;
     	set+= processCategories(pptContents)+System.lineSeparator();
@@ -178,16 +174,33 @@ public class ParsePanel extends GamePanel
     	
     	return set;
     }
-    private String processQuestions(String pptContents)
+    public String processQuestions(String pptContents)
     {
     	String[] lines = pptContents.split("\\r?\\n");
     	String qna = "";
     	int matchCounter=0;
-    	
+    	if(lines.length<52)
+    	{
+    		ExceptionHandler.getHandler().handleException(new InvalidFormatException("Too few lines to be turned into a valid question set"));
+    	}
+    	boolean standard = false;
+    	int countedStandard = 0;
     	for(int i=0; i<lines.length; i++)
     	{
     		String currentLine = lines[i].trim();
-    		if(matchCounter<50&&currentLine.matches("(Q|R):.*"))
+    		if(currentLine.matches("(Q|R):.*"))
+    		{
+    			countedStandard++;
+    		}
+    	}
+    	if(countedStandard>=50)
+    	{
+    		standard= true;
+    	}
+    	for(int i=0; i<lines.length; i++)
+    	{
+    		String currentLine = lines[i].trim();
+    		if(matchCounter<50&&(currentLine.matches("(Q|R):.*")||!standard))
     		{
     			if(matchCounter%10==0)
     			{
@@ -204,7 +217,14 @@ public class ParsePanel extends GamePanel
     			}
     			else
     			{
-    				qna+= currentLine.substring(3).trim() + System.lineSeparator();
+    				if(standard)
+    				{
+    					qna+= currentLine.substring(3).trim() + System.lineSeparator();
+    				}
+    				else
+    				{
+    					qna+= currentLine.trim()+System.lineSeparator();
+    				}
     			}
     			matchCounter++;
     			if(matchCounter>=50)
@@ -215,27 +235,47 @@ public class ParsePanel extends GamePanel
     		}
     		else if(matchCounter>=50)
     		{
-    			if(lines[i].trim().contains("Final Jeopardy"))
+    			if(lines[i].trim().contains("Final Jeopardy")&&standard)
     			{
+    				//grab ques
     				do
     				{
     					i++;
     				}
     				while(lines[i].length()<4);
     				qna+= lines[i].trim() + System.lineSeparator();
+    				//ques grabbed
     				do
     				{
     					i++;
     				}
     				while(!lines[i].trim().contains("Final Jeopardy"));
+    				//shift to ans
     				do
     				{
     					i++;
     				}
     				while(lines[i].trim().length()<4);
+    				//seek ans
+    				qna+= lines[i].trim() + System.lineSeparator();
+    				//ans grabbed
+    			}
+    			else
+    			{
+    				while(lines[i].length()<4)
+    				{
+    					i++;
+    				}
+    				qna+= lines[i].trim() + System.lineSeparator();
+    				do {
+    					i++;
+    				}
+    				while(lines[i].length()<4);
+
     				qna+= lines[i].trim() + System.lineSeparator();
     			}
     		}
+    		
     	
     	}
     	return qna;
@@ -243,28 +283,35 @@ public class ParsePanel extends GamePanel
     //it is not certain that there will only be 5 categories as seen in sem. final
     //therefore i must weigh how many times each potential category appears and submit the most likely
     //candidates as the categories.
-    private String processCategories(String pptContents)
+    public String processCategories(String pptContents)
     {
     	ArrayList<String> slicedLines = new ArrayList<String>();
     	ArrayList<Integer> weight = new ArrayList<Integer>();
     	String[] lines = pptContents.split("\\r?\\n");
     	for(int i=0; i<lines.length; i++)
     	{
+    		int currWeight = 1;
+    		String potentialCat;
     		if(lines[i].length()>7&&lines[i].matches(".*\\$[1-5]{1}00.*"))
     		{
-    			String potentialCat = lines[i].substring(lines[i].indexOf("$")+5).trim();
-    			
+    			currWeight = 20;
+    			potentialCat = lines[i].substring(lines[i].indexOf("$")+5).trim();
+    		}
+    		else
+    		{
+    			potentialCat = lines[i];
+    		}
     			if(slicedLines.contains(potentialCat))
     			{
     				int indexCat = slicedLines.indexOf(potentialCat);
-    				weight.set(indexCat, weight.get(indexCat)+1);
+    				weight.set(indexCat, weight.get(indexCat)+currWeight);
     			}
     			else
     			{
     				slicedLines.add(potentialCat);
-    				weight.add(1);
+    				weight.add(currWeight);
     			}
-    		}
+    		
     	}
         
     	
@@ -289,6 +336,10 @@ public class ParsePanel extends GamePanel
     	{
     		categories+=confirmedCats[i]+DefaultPanel.categorySeparator+" ";
     	}
+    	if(categories.contains("null"))
+    	{
+    		ExceptionHandler.getHandler().handleException(new InvalidFormatException("Could not calculate the most likely categories"));
+    	}
     	return categories;
     }
     /**
@@ -307,31 +358,16 @@ public class ParsePanel extends GamePanel
         public void actionPerformed(ActionEvent e)
         {
         	
-    		JFileChooser fc = new JFileChooser();
-    		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            try
+            String x = newName.getText();
+            if(x.isEmpty())
             {
-                fc.setCurrentDirectory(new File(defaultPath));
+            	JOptionPane.showMessageDialog(new JFrame(), "Please enter new game set name", "Failed to create set", JOptionPane.ERROR_MESSAGE);
+            	return;
             }
-            catch(Exception ex)
-            {
-            	handleException(ex);
-            }
-            int returnVal = fc.showOpenDialog(null);
-            if (returnVal == JFileChooser.APPROVE_OPTION) 
-            {
-                File directory = fc.getSelectedFile();
+            if(!x.contains(".txt")) x = x + ".txt";
+            String path = UIChooser.getUIChooser().getDirectoryViaUI() + System.getProperty("file.separator") + x;
                 try
                 {
-                	
-                    String x = newName.getText();
-                    if(x.isEmpty())
-                    {
-                    	JOptionPane.showMessageDialog(new JFrame(), "Please enter new game set name", "Failed to create set", JOptionPane.ERROR_MESSAGE);
-                    	return;
-                    }
-                    if(!x.contains(".txt")) x = x + ".txt";
-                    String path = directory.toPath() + System.getProperty("file.separator") + x;
                     File files = new File(path);
                     if(files.exists())
                     {
@@ -355,13 +391,13 @@ public class ParsePanel extends GamePanel
                     fw.write(lines);
                     fw.close();
                     newName.setText("");
-                    JOptionPane.showMessageDialog(new JFrame(), "The gameset named "+x+" has been successfully created. \n\n Find it in "+ directory.toPath());
+                    JOptionPane.showMessageDialog(new JFrame(), "The gameset named "+x+" has been successfully created. \n\n Find it at "+ path);
                 }
                 catch(Exception ex)
                 {
-                	handleException(ex);
+                	ExceptionHandler.getHandler().handleException(ex);
                 }
-            }
+            
 
         }
         /**
@@ -410,7 +446,7 @@ public class ParsePanel extends GamePanel
         
         public void actionPerformed(ActionEvent e)
         {
-            Driver.switchPanels("LoadPanel");
+            DefaultPanel.getManager().toPanel("LoadPanel");
         }
     }
 }

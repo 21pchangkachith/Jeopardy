@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.filechooser.*;
 import javax.swing.filechooser.FileFilter;
+
+import jep.utilities.ExceptionHandler;
 /**
  * Class LoadPanel the panel used to play/edit from files
  *
@@ -106,7 +108,7 @@ public class LoadPanel extends GamePanel
             }
             catch(Exception ex)
             {
-                handleException(ex);
+                ExceptionHandler.getHandler().handleException(ex);
             }
             int returnVal = fc.showOpenDialog(null);
 
@@ -150,7 +152,7 @@ public class LoadPanel extends GamePanel
     	}
         public void actionPerformed(ActionEvent e)
         {
-            Driver.play("QuestionListPanel", file, edit);
+            DefaultPanel.getManager().toPanel("QuestionListPanel", file, edit);
         }
     }
 }

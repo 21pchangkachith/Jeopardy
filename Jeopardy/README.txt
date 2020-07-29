@@ -27,7 +27,6 @@ HOW TO USE:
 		3) Click "Create new set:" 
 		4) Navigate to the folder you want to set to be created in
 		5) Press "Open"
-		
 	Importing sets from powerpoint:
 		1) Play>Create new set
 		2) Click "Import set"

@@ -1,6 +1,7 @@
 package jep;
 import javax.swing.*;
 
+import jep.utilities.ExceptionHandler;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -42,8 +43,6 @@ public class SpecialPanel extends GamePanel
     {
     	super();
     	GridBagConstraints c = new GridBagConstraints();
-    	setOpaque(false);
-        setLayout(new GridBagLayout());
         setLayout(new GridBagLayout());
         question=null;
         
@@ -52,9 +51,7 @@ public class SpecialPanel extends GamePanel
 
         JButton backButton = new JButton("");
         backButton.setIcon(DefaultPanel.backButtonIcon);
-        backButton.setOpaque(false);
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
+        removeBackground(backButton);
         backButton.addActionListener(new Listener("QuestionListPanel"));
         
         c.gridy=0;
@@ -154,7 +151,7 @@ public class SpecialPanel extends GamePanel
     }
     public void updateScores()
     {
-        int[] scores= DefaultPanel.getScores();
+        int[] scores= DefaultPanel.getManager().getScores();
         for(int i=0; i<numTeams; i++)
         {
             scoreLabels[i].setText("Team " + (i+1) + ": " + scores[i]);
@@ -172,24 +169,12 @@ public class SpecialPanel extends GamePanel
         if(isDailyDouble) 
         {   
             specialLabel.setText("Daily Double!");
-            info.add("      Bet Amount: ");
-            
+            info.add("      Bet Amount: "); 
         }
         else if(question.isFinalJeopardy())
         {
             specialLabel.setText("Final Jeopardy!");
-            
-            try {
-            	InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/music/Jeopardy.wav");
-            	InputStream bufferedStream = new BufferedInputStream(stream);
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioInputStream);
-                clip.start();
-            } catch(Exception ex) {
-                handleException(ex, "Error with playing sound. \n\n");
-                ex.printStackTrace();
-            }
+            playJingle();
             for(int i=0; i<numTeams; i++)
             {
                 info.add("       Team "+(i+1)+" Bets: ");
@@ -207,15 +192,7 @@ public class SpecialPanel extends GamePanel
             JPanel flow = new JPanel();
             flow.setLayout(new GridBagLayout());
             flow.setOpaque(false);
-            JTextField amount = new JTextField("");
-            amount.setFont(new Font("New Times Roman", Font.BOLD, 25));
-            Dimension dim = new Dimension(300, 50);
-            amount.setSize(dim);
-            amount.setPreferredSize(dim);
-            amount.setMaximumSize(dim);
-            amount.setVisible(true);
-            amount.setBackground(buttonBackColor);
-            amount.setForeground(buttonColor);
+            JTextField amount = createBetField();
             flow.add(amount);
             inputBox.add(flow);
 
@@ -224,6 +201,33 @@ public class SpecialPanel extends GamePanel
         }
         
     }
+
+	private JTextField createBetField() {
+		JTextField amount = new JTextField("");
+		amount.setFont(new Font("New Times Roman", Font.BOLD, 25));
+		Dimension dim = new Dimension(300, 50);
+		amount.setSize(dim);
+		amount.setPreferredSize(dim);
+		amount.setMaximumSize(dim);
+		amount.setVisible(true);
+		amount.setBackground(buttonBackColor);
+		amount.setForeground(buttonColor);
+		return amount;
+	}
+
+	private void playJingle() {
+		try {
+			InputStream stream = getClass().getResourceAsStream("/jep/GameFiles/resources/music/Jeopardy.wav");
+			InputStream bufferedStream = new BufferedInputStream(stream);
+		    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedStream);
+		    Clip clip = AudioSystem.getClip();
+		    clip.open(audioInputStream);
+		    clip.start();
+		} catch(Exception ex) {
+		    ExceptionHandler.getHandler().handleException(ex, "Error with playing sound. \n\n");
+		    ex.printStackTrace();
+		}
+	}
     private class SpecialListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e)
@@ -247,7 +251,7 @@ public class SpecialPanel extends GamePanel
                     }
                     question.setFinalJeopardyValues(values);
                 }
-                Driver.switchPanels("QuestionPanel");
+                DefaultPanel.getManager().toPanel("QuestionPanel");
             }
             catch(NumberFormatException empty)
             {

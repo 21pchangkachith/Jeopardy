@@ -1,6 +1,10 @@
 package jep;
 
 import javax.swing.*;
+
+import jep.utilities.Editor;
+import jep.utilities.ExceptionHandler;
+
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.io.*;
@@ -62,8 +66,6 @@ public class QAPanel extends GamePanel{
 
         editArea = makeQuestionArea();
         editArea.setOpaque(true);
-        //editArea.setForeground(Color.RED);
-      //  editArea.setBackground(categoryBackColor);
         editArea.setForeground(buttonColor);
         editArea.setBackground(buttonBackColor);
         
@@ -74,13 +76,11 @@ public class QAPanel extends GamePanel{
         category = makeInformationLabel(categoryColor, 44);
        
         backButton = new JButton("");
-        backButton.setOpaque(false);
         Dimension dim = new Dimension(107, 84);
         backButton.setMaximumSize(dim);
         backButton.setPreferredSize(dim);
         backButton.setMargin(new Insets(0,0,0,0));
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
+        removeBackground(backButton);
         backButton.setIcon(DefaultPanel.backButtonIcon);
         
 
@@ -147,46 +147,22 @@ public class QAPanel extends GamePanel{
         temp.setOpaque(false);
     	return temp;
     }
-    protected void doEdit()
+    protected boolean doEdit()
     {
     	try {
     		String added = editArea.getText();
-    		if(added.contains("\n")||added.contains(System.getProperty("line.separator")))
+    		if(added.contains("\n")||added.contains(System.getProperty("line.separator"))||added.isEmpty())
     		{
     			JOptionPane.showMessageDialog(new JFrame(), "This program does not currently support empty lines.\n\n If this is an issue, please contact me.");
-    			return;
+    			return false;
     		}
-			String line = null;
-			String store = "";
-			String condition = content.getText();
-			if (editArea.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(new JFrame(),
-						"Please do not attempt to save blank questions, it may make the file unreadable");
-				return;
-			}
-			FileReader fileReader = new FileReader(file);
-			Scanner reader = new Scanner(fileReader);
-			do {
-				line = reader.nextLine();
-				store = store + line + System.lineSeparator();
-			} while (!line.equals(condition));
-			store = store.substring(0, store.indexOf(condition));
-			
+    		Editor.getEditor().replaceValue(content.getText(), added, file);
 			content.setText(added);
-			store = store + added + System.lineSeparator();
-			while (reader.hasNext()) {
-				line = reader.nextLine();
-				store = store + line + System.lineSeparator();
-			}
-			fileReader.close();
-			reader.close();
-			FileWriter fw = new FileWriter(file);
-			fw.write(store);
-			fw.close();
-			JOptionPane.showMessageDialog(new JFrame(), "Update successful");
+			return true;
 		} catch (Exception ex) {
-			handleException(ex);
+			ExceptionHandler.getHandler().handleException(ex);
 		}
+    	return false;
     }
     /**
      * Method setQuestion stores the new question and updates labels to reflect it
@@ -240,7 +216,7 @@ public class QAPanel extends GamePanel{
      */
     public void updateScores()
     {
-        int[] scores= DefaultPanel.getScores();
+        int[] scores= DefaultPanel.getManager().getScores();
         for(int i=0; i<numTeams; i++)
         {
             pointLabels[i].setText("Team " + (i+1) + ": " + scores[i]);

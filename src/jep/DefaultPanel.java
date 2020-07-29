@@ -1,6 +1,9 @@
 package jep;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+
+import jep.utilities.ExceptionHandler;
+
 import java.awt.*;
 import java.io.*;
 /**
@@ -45,11 +48,12 @@ public class DefaultPanel extends GamePanel
     private String previousPanel;
     public static final String categorySeparator = "#";
     private static JPanel[] PANELS;
+    private static final DefaultPanel defaultPanel = new DefaultPanel();
     /**
      * 'DefaultPanel' class constructor, instantiates CardLayout object 'cards' and sets up the panels
      * 
      */
-    public DefaultPanel()
+    private DefaultPanel()
     {
     	ImageIcon icon = null;
     	try {
@@ -65,7 +69,7 @@ public class DefaultPanel extends GamePanel
 		}
 		catch(Exception e)
 		{
-			handleException(e, "Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
+			ExceptionHandler.getHandler().handleException(e, "Background missing, please replace /GameFiles/resources/images/BackButtonPicture.PNG");
 		}
 		backButtonIcon = icon;
 
@@ -78,6 +82,10 @@ public class DefaultPanel extends GamePanel
         setUpMenuPanels();
         cards.show(this, PANELS[0].getClass().getSimpleName());
         
+    }
+    public static DefaultPanel getManager()
+    {
+    	return defaultPanel;
     }
     @Override
     protected void paintComponent(Graphics g)
@@ -126,11 +134,11 @@ public class DefaultPanel extends GamePanel
         	}
         }
     }
-    public static int[] getScores()
+    public int[] getScores()
     {
     	return qListP.getScores();
     }
-    public static int getScore(int index)
+    public int getScore(int index)
     {
     	return qListP.getScore(index);
     }
@@ -175,13 +183,14 @@ public class DefaultPanel extends GamePanel
      */
     public void toPanel(String panel)
     {
+    	boolean success = true;
         switch(panel)
         {
         	case "AnswerPanel":
         		aP.updateScores();
         		if(editing)
         		{
-        			qP.doEdit();
+        			success = qP.doEdit();
         		}
         		break;
         	case "QuestionPanel":
@@ -189,7 +198,7 @@ public class DefaultPanel extends GamePanel
         	    qP.resetTeamButtons();
         		if(editing && previousPanel.equals("AnswerPanel"))
         		{
-        			aP.doEdit();
+        			success = aP.doEdit();
         		}
         		break;
         	case "QuestionListPanel":
@@ -210,13 +219,16 @@ public class DefaultPanel extends GamePanel
         			}
         			catch(Exception ex)
         			{
-        				handleException(ex);
+        				ExceptionHandler.getHandler().handleException(ex);
         			}
         		}
         		break;
         }
-        cards.show(this, panel);
-        previousPanel = panel;
+        if(success)
+        {
+        	cards.show(this, panel);
+        	previousPanel = panel;
+        }
     }
 
     /**

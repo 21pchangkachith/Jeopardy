@@ -68,10 +68,10 @@ public class QuestionPanel extends QAPanel {
 		content.setText(q.getQuestion());
 	}
 	@Override
-	public void doEdit()
+	public boolean doEdit()
 	{
-		super.doEdit();
 		currQues.setQuestion(editArea.getText());
+		return super.doEdit();
 	}
 	/**
 	 * Class PointsListener the listener that controls all functions related to
@@ -144,12 +144,12 @@ public class QuestionPanel extends QAPanel {
 			if (points > 0)
 				currQues.setCurrentValue(currQues.getCurrentValue() - points);
 			money.setText("$" + currQues.getCurrentValue());
-			int[] scores = DefaultPanel.getScores();
+			int[] scores = DefaultPanel.getManager().getScores();
 			for (int i = 0; i < numTeams; i++) {
 				pointLabels[i].setText("Team " + (i + 1) + ": " + scores[i]);
 			}
 			if (currQues.getCurrentValue() == 0) {
-				Driver.switchPanels("AnswerPanel");
+				DefaultPanel.getManager().toPanel("AnswerPanel");
 				resetTeamButtons();
 			}
 		}
@@ -233,7 +233,7 @@ public class QuestionPanel extends QAPanel {
 		 * @return the existing score
 		 */
 		private int findExistingScore() {
-			return DefaultPanel.getScore(index - 1);
+			return DefaultPanel.getManager().getScore(index - 1);
 		}
 
 		/**
@@ -252,7 +252,7 @@ public class QuestionPanel extends QAPanel {
 				for (int i = 0; i < numTeams; i++) {
 					DefaultPanel.setScore(calculateScore(i), i);
 				}
-				Driver.switchPanels("AnswerPanel");
+				DefaultPanel.getManager().toPanel("AnswerPanel");
 			}
 
 			/**
@@ -278,7 +278,7 @@ public class QuestionPanel extends QAPanel {
 			 * @return the team's existing score
 			 */
 			private int findExistingScore(int i) {
-				return DefaultPanel.getScore(i);
+				return DefaultPanel.getManager().getScore(i);
 			}
 		}
 	}
