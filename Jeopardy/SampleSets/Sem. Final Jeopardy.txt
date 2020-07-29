@@ -3,7 +3,7 @@ These lines are intended to discourage you from editing this file
 If you are interested in directly modifying the particular set of questions in this text file, please refrain from modifying the formatting.
 However, it is recommended that you edit this set of questions directly through the program.
 Categories:
-America Expands# The Constitution# # Imperialism# Gilded Age# 
+America Expands# The Constitution# Imperialism# Reconstruction# Ideas# 
 Questions:
 C1QA
 How many branches did the new Constitution create?  Name them

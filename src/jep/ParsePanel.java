@@ -292,15 +292,17 @@ public class ParsePanel extends GamePanel
     	{
     		int currWeight = 1;
     		String potentialCat;
-    		if(lines[i].length()>7&&lines[i].matches(".*\\$[1-5]{1}00.*"))
+    		if(lines[i].length()>5)
     		{
-    			currWeight = 20;
-    			potentialCat = lines[i].substring(lines[i].indexOf("$")+5).trim();
-    		}
-    		else
-    		{
-    			potentialCat = lines[i];
-    		}
+    			if(lines[i].matches(".*\\$[1-5]{1}00.*"))
+    			{
+    				currWeight = 50;
+    				potentialCat = lines[i].substring(lines[i].indexOf("$")+5).trim();
+    			}
+    			else
+        		{
+        			potentialCat = lines[i];
+        		}
     			if(slicedLines.contains(potentialCat))
     			{
     				int indexCat = slicedLines.indexOf(potentialCat);
@@ -311,7 +313,7 @@ public class ParsePanel extends GamePanel
     				slicedLines.add(potentialCat);
     				weight.add(currWeight);
     			}
-    		
+    		}
     	}
         
     	
@@ -341,6 +343,7 @@ public class ParsePanel extends GamePanel
     		ExceptionHandler.getHandler().handleException(new InvalidFormatException("Could not calculate the most likely categories"));
     	}
     	return categories;
+    	
     }
     /**
      * Class CreateListener the listener that is used to create new files
@@ -365,7 +368,13 @@ public class ParsePanel extends GamePanel
             	return;
             }
             if(!x.contains(".txt")) x = x + ".txt";
-            String path = UIChooser.getUIChooser().getDirectoryViaUI() + System.getProperty("file.separator") + x;
+            String path = UIChooser.getUIChooser().getDirectoryViaUI();
+            if(path==null)
+            {
+            	return;
+            }
+            path+= System.getProperty("file.separator") + x;
+            
                 try
                 {
                     File files = new File(path);

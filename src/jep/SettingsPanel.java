@@ -13,9 +13,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URISyntaxException;
 
 import org.json.*;
 
@@ -35,8 +37,8 @@ public class SettingsPanel extends AuxiliaryPanel {
 	public SettingsPanel() {
 		super();
 		try {
-
-			stream = new FileInputStream(new File("./settings.json"));
+			File thing = new File("./settings.json");
+			stream = new FileInputStream(thing);
 			JSONTokener tokener = new JSONTokener(stream);
 			settings = (JSONObject) tokener.nextValue();
 			numDailyDoubles = ((JSONObject)settings.get("settings")).getInt("num_daily_doubles");
@@ -120,6 +122,11 @@ public class SettingsPanel extends AuxiliaryPanel {
 				{
 					return;
 				}
+				if(userInput.isBlank())
+				{
+					JOptionPane.showMessageDialog(new JFrame(), "Please do not attempt to save blank fields.");
+					return;
+				}
 				for(String setting: settings.keySet())
 				{
 					JSONObject settingType = (JSONObject)settings.get(setting);
@@ -145,34 +152,29 @@ public class SettingsPanel extends AuxiliaryPanel {
 			{
 				try
 				{
-					String path = getClass().getResource("/jep/GameFiles/resources/Settings.json").toURI().getPath();
-					File file =  new File(path);
-					OutputStream out = new FileOutputStream(file);
-					OutputStreamWriter writer = new OutputStreamWriter(out);
-					settings.write(writer);
-					writer.close();
-					out.close();
-					setValue(settingName, userInput);
-					JOptionPane.showMessageDialog(new JFrame(), "Changes saved. Restart to see effects");
+					adjustSettingsOnEclipse(userInput);
 				}
 				catch(Exception exc)
 				{
 					ExceptionHandler.getHandler().handleException(ex);
-					ex.printStackTrace();
 				}
 			}
 			catch(Exception ex)
 			{
-				if(userInput.isBlank())
-				{
-					JOptionPane.showMessageDialog(new JFrame(), "Please do not attempt to save blank fields.");
-				}
-				else
-				{
-					ExceptionHandler.getHandler().handleException(ex);
-					ex.printStackTrace();
-				}
+				ExceptionHandler.getHandler().handleException(ex);
 			}
+		}
+		private void adjustSettingsOnEclipse(String userInput)
+				throws URISyntaxException, FileNotFoundException, IOException, Exception {
+			String path = getClass().getResource("/jep/GameFiles/resources/Settings.json").toURI().getPath();
+			File file =  new File(path);
+			OutputStream out = new FileOutputStream(file);
+			OutputStreamWriter writer = new OutputStreamWriter(out);
+			settings.write(writer);
+			writer.close();
+			out.close();
+			setValue(settingName, userInput);
+			JOptionPane.showMessageDialog(new JFrame(), "Changes saved. Restart to see effects");
 		}
 	}
 
